@@ -1,26 +1,55 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <HeaderTop></HeaderTop>
+    <router-view v-slot="{ Component }">
+      <transition name="slide-fade" mode="out-in">
+        <div :key="$route.name">
+          <component :is="Component"></component>
+        </div>
+      </transition>
+    </router-view>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import HeaderTop from './components/HeaderTop.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HeaderTop
+  },
+  setup(){
+    console.log("APPPPPPPPPPPPPP")
   }
 }
 </script>
 
 <style>
+* {
+  margin: 0;
+  padding: 0;
+}
+
 #app {
+
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  background: rgb(24, 25, 28);
 }
+
+/* .slide-fade-enter-active {
+    transition: all 0.8s ease-in;
+  }
+  .slide-fade-leave-active {
+    transition: all 0.8s ease-in;
+  }
+  .slide-fade-enter-from{
+    opacity: 30%;
+  }
+  .slide-fade-leave-to {
+    opacity: 30%;
+  } */
 </style>

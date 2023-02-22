@@ -1,0 +1,12 @@
+.test-class {
+    background: antiquewhite !important;
+    color:rgba(8, 7, 16, 1) !important;
+    box-shadow: 0 0 0 3px rgba(250, 235, 215, 0.215) !important;
+    width: 80px;
+}
+
+.popupClass {
+    background-color:   rgba(8, 7, 16, 1) !important;
+    margin-top: 10px;
+    border: 2px solid antiquewhite;
+} 
