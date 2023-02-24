@@ -7,12 +7,12 @@ import { createClient } from 'graphql-ws';
 
 const httpLink = new HttpLink({
   // You should use an absolute URL here
-  uri: 'http://localhost:4000/graphql',
+  uri: 'https://backandreachat.onrender.com/graphql',
 })
 
 // Create the subscription websocket link
 const wsLink = new GraphQLWsLink(createClient({
-  url: 'ws://localhost:4000/graphql',
+  url: 'wss://backandreachat.onrender.com/graphql',
 }));
 
 // using the ability to split links, you can send data to each link
