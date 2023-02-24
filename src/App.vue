@@ -20,7 +20,6 @@ export default {
     HeaderTop
   },
   setup(){
-    console.log("APPPPPPPPPPPPPP")
   }
 }
 </script>

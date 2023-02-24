@@ -46,18 +46,7 @@ export default {
     const password = ref('')
     onMounted(() => {
       provideApolloClient(defaultClient)
-
-      //   const EVENT_CREATED_SUB = gql`
-      //   subscription {
-      //     messageAdded2 
-      //   }
-      // `;
-
-      // const response = useSubscription(EVENT_CREATED_SUB);
-      // console.log("SE HABRÁ CONECTADO?")
-      // response.onResult((result) => {
-      //   console.log("RESULSSSSSSSSSSSS", result);
-      // });
+      console.log("loooooooollllllllll")
     })
 
 

@@ -172,7 +172,7 @@ button:hover {
   background: antiquewhite;
   right: 0;
   transition: 1s;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .registerButtonDark {

@@ -2,14 +2,26 @@
   <div :class="{ transition: isDark && isChange }"></div>
   <div :class="{ transitionLight: !isDark && isChange }"></div>
   <div :class="{ landing: !isDark, landingBlack: isDark }">
+    <div :class="{ bgModal: modelOpen }">
+      <div :class="{ imgModalOpen: modelOpen, imgModalClose: !modelOpen && hasbenOpen }">
+        <div :class="{ imgDrag: modelOpen }" @drop.prevent="dropHandle" @dragover.prevent @dragenter.prevent
+          v-if="modelOpen">
+          <input type="file" class="inputFile" v-on:change="inputModal">
+          <h1 class="titleDrop1">Arrastra y suelta tu imagen de preferencia en formato jpg, jpeg o png. <br> O <br> haz
+            click para seleccionarla</h1>
+        </div>
+        <div class="close" @click="openModalupdateImg" v-if="modelOpen"></div>
+      </div>
+    </div>
     <div :class="{ navBarOpenBg: navBarStatus, navBarCloseBg: !navBarStatus }">
       <div :class="{ navBarOpen: navBarStatus, navBarClose: !navBarStatus }">
-        <img src="../../public/cerezas.jpg" alt="friendImg" class="ownImg">
-        <h1 class="titleUserName"> UserName</h1>
+        <img :src=ownImg alt="friendImg" class="ownImg">
+        <h1 class="titleUserName"> {{ usarNameNav }}</h1>
+        <img src="../../public/editIcon.svg" alt="SVG" class="editIcon" @click="openModalupdateImg">
         <div class="optionsContent">
           <div class="option">UserName</div>
           <div class="option">Password</div>
-          <div class="option">Enviar Croissant a Jeremy</div>
+          <div class="option" @click="sendCroissant">Enviar Croissant a Jeremy</div>
           <div class="optionClose" @click="closeSession">Cerra Sesión</div>
         </div>
       </div>
@@ -20,14 +32,14 @@
           <p>Ir al fondo</p>
         </div>
         <div v-for="message, index in messageList" :key="index">
-          <div class="ownMessage" v-if="message.userName == 'Ale'">
+          <div class="ownMessage" v-if="message.userID == idLocal">
             <div class="ownMessageContent">
-              <p class="textOwnMessage">{{ message.messageContent }}</p>
+              <p class="textOwnMessage">{{ message.message }}</p>
             </div>
           </div>
           <div class="frienMessage" v-else>
             <div class="friendMessageContent">
-              <p class="textFriendMessage">{{ message.messageContent }}</p>
+              <p class="textFriendMessage">{{ message.message }}</p>
             </div>
           </div>
         </div>
@@ -37,9 +49,9 @@
         <div class="emojiContent">
           <img src="../../public/happy-icon.svg" alt="SVG" class="emojiSvg">
         </div>
-        <input type="text" class="inputMessage" placeholder="Escribe un mensaje">
+        <input type="text" class="inputMessage" placeholder="Escribe un mensaje" v-model="inputMessageContent">
         <div class="senderContent">
-          <img :src="`data:image/jpg;base64,${imgSRC}`"  alt="SVG" class="sendSvg">
+          <img src="../../public/sent-icon.svg" alt="SVG" class="sendSvg" @click="SENDMESSAGER">
         </div>
       </div>
     </div>
@@ -48,9 +60,9 @@
         <h1 class="connects">Amigos</h1>
       </div>
       <div class="contentList">
-        <li v-for="friend in friendsList" :key="friend.userName">
+        <li v-for="friend, i in friendsList" :key="friend.id" @click="getMessages(friend.id, i)">
           <div class="friendContent">
-            <img :src="imgSRC" alt="friendImg" class="friendImg">
+            <img :src="friend.img" alt="friendImg" class="friendImg">
             <h1 class="friendName">{{ friend.userName }}</h1>
             <div :class="{ friendConnect: friend.connect, friendDisconnect: !friend.connect }"></div>
           </div>
@@ -62,33 +74,51 @@
 <script>
 import { ref, watch, onMounted } from 'vue'
 import { darkMode } from '@/utils/darkMode'
-import cerezas from '../../public/cerezas.jpg'
 import { navBar } from '@/utils/navBar'
 import { provideApolloClient } from '@vue/apollo-composable'
 import { defaultClient } from '../main'
-import { useQuery, useMutation } from '@vue/apollo-composable'
+import { useQuery, useMutation, useSubscription } from '@vue/apollo-composable'
 import gql from 'graphql-tag'
-
+import './AlertsCSS/imgModal.css'
+import Swal from 'sweetalert2'
+import './AlertsCSS/registerAlerts.css'
 
 export default {
   setup() {
-
-    const imgSRC = ref('')
-    const img = ref()
+    const modelOpen = ref(false)
+    const hasbenOpen = ref(false)
     const isUp = ref(false)
     var scrollObj = null
     const isDark = ref(darkMode.value.isDark)
     const isChange = ref(darkMode.value.isChange)
     const navBarStatus = ref(navBar.value.isOpen)
+    const usarNameNav = ref('')
+    const imaAndrea = ref('')
+    const ownImg = ref('')
+    const friendsList = ref([])
+    const friendSelect = ref('')
+    const idLocal = ref('')
+    const messageList = ref([])
+    const inputMessageContent = ref('')
 
+    var inputModalCounter = 0
 
     onMounted(async () => {
       provideApolloClient(defaultClient)
+
+      
       scrollObj = document.getElementsByClassName("messagesContent");
       scrollObj[0].scrollTop = scrollObj[0].scrollHeight;
       scrollObj[0].addEventListener('scroll', handleScroll)
+      document.getElementsByClassName('inputMessage')[0].addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && inputMessageContent.value !== '' && friendSelect.value !== '') {
+          SENDMESSAGER()
+        }
+      });
+      usarNameNav.value = localStorage.userName
+      idLocal.value = localStorage.userID
 
-      const { onResult } = await useQuery(gql`
+      const { onResult, refetch } = await useQuery(gql`
         query GetAllUsers {
           getAllUsers {
             id
@@ -96,6 +126,7 @@ export default {
             status
             img {
               data
+              contentType
             }
           }
         }
@@ -104,21 +135,103 @@ export default {
           fetchPolicy: 'no-cache',
         })
 
-      onResult(async (res) => {
-        console.log("USERSSSS", res.data.getAllUsers[2].img.data.data)
-        imgSRC.value = btoa(String.fromCharCode.apply(null, new Uint8Array(res.data.getAllUsers[2].img.data.data)));
-        img.value = new Image();
-        img.value.src = `data:image/jpg;base64,${imgSRC.value}`;
+      onResult(async (data) => {
+        friendsList.value = []
+        data.data.getAllUsers.map((friend) => {
+          if (friend.userName == 'Alejandro' && friend.userName !== localStorage.userName) {
+            friendsList.value.push({
+              userName: friend.userName,
+              connect: friend.status,
+              img: './nyan-cat.gif',
+              id: friend.id
+            })
+          } else {
+            if (friend.userName !== localStorage.userName) {
+              // const chatCode = String.fromCharCode(...new Uint8Array(friend.img.data.data))
+              var binary = '';
+              var bytes = new Uint8Array(friend.img.data.data);
+              var len = bytes.byteLength;
+              for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+              }
+              const base64String = btoa(binary);
+              friendsList.value.push({
+                userName: friend.userName,
+                connect: friend.status,
+                img: `data:image/${friend.img.contentType};base64,` + base64String,
+                id: friend.id
+              })
+            } else {
+              if (friend.userName == "Alejandro") {
+                ownImg.value = "./nyan-cat.gif"
+              } else {
+                var binary2 = '';
+                var bytes2 = new Uint8Array(friend.img.data.data);
+                var len2 = bytes2.byteLength;
+                for (var i2 = 0; i2 < len2; i2++) {
+                  binary2 += String.fromCharCode(bytes2[i2]);
+                }
+                const base64String2 = btoa(binary2);
+                // const base64String = btoa(String.fromCharCode(...new Uint8Array(friend.img.data.data)));
+                ownImg.value = `data:image/${friend.img.contentType};base64,` + base64String2
+
+              }
+            }
+          }
+        })
       })
+      refetch()
+    })
+
+    var newMessage = useSubscription(gql`
+      subscription Xddd($messageAddedId: ID) {
+        messageAdded(id: $messageAddedId) {
+          groupName
+          isgroup
+          message {
+            date
+            message
+            userID
+            userName
+          }
+          usersID
+        }
+      }
+    `, {
+      "messageAddedId": localStorage.userID
+    })
+
+    newMessage.onResult((result) => {
+      if (result.data.messageAdded.isGroup) {
+        console.log("Messsage Group", result)
+      } else {
+        if (result.data.messageAdded.usersID.includes(friendSelect.value)) {
+          messageList.value.push(...[result.data.messageAdded.message])
+          setTimeout(goToBottom, 1)
+        }
+      }
+    })
+
+    var changeStatus = useSubscription(gql`
+      subscription StatusUser {
+        statusUser {
+          status
+          userId
+        }
+      }
+    `)
+
+    changeStatus.onResult((result) => {
+      if (result.data.statusUser.userId !== localStorage.userID) {
+        friendsList.value[friendsList.value.findIndex((friend) => friend.id == result.data.statusUser.userId)].connect = result.data.statusUser.status
+      }
     })
 
 
 
-    const handleScroll = () => {
-      console.log("toppppp", scrollObj)
-      console.log("HEIIGGGG", scrollObj[0].scrollHeight)
 
-      scrollObj[0].scrollHeight * (80 / 100) > (scrollObj[0].scrollTop + scrollObj[0].clientHeight) ? isUp.value = true : isUp.value = false
+    const handleScroll = () => {
+      scrollObj[0].scrollHeight * (75 / 100) > (scrollObj[0].scrollTop + scrollObj[0].clientHeight) ? isUp.value = true : isUp.value = false
     }
 
     const goToBottom = () => {
@@ -146,104 +259,229 @@ export default {
       window.location.href = "#/login";
     }
 
+    const openModalupdateImg = async () => {
+      modelOpen.value = !modelOpen.value
+      hasbenOpen.value = true
+    }
 
+    const inputModal = async (e) => {
+      if (inputModalCounter == 0) {
+        inputModalCounter++
+      } else {
+        var img = e.target.files[0]
+        if (img.type.split("/")[1] == "png" || img.type.split("/")[1] == "jpg" || img.type.split("/")[1] == "jpeg") {
+
+          const reader = await new FileReader();
+          reader.readAsDataURL(img);
+          reader.onload = async (event) => {
+            imaAndrea.value = event.target.result
+            const { mutate: Register } = useMutation(
+              gql`
+              mutation Mutation($data: changeImgInput) {
+                changeImgUser(data: $data) {
+                  error
+                  status
+                }
+              }
+            `
+            )
+            Register({
+              "data": {
+                "base64": imaAndrea.value,
+                "userId": localStorage.userID
+              }
+            })
+          };
+        } else {
+          openModalupdateImg()
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Solo aceptamos imágenes en formato png, jpg y jpeg',
+            customClass: {
+              popup: 'popupModal'
+            }
+          })
+        }
+      }
+
+    }
+
+    const dropHandle = (e) => {
+      var img = e.dataTransfer.files[0]
+      if (img.type.split("/")[1] == "png" || img.type.split("/")[1] == "jpg" || img.type.split("/")[1] == "jpeg") {
+
+        const reader = new FileReader();
+        reader.readAsDataURL(img);
+        reader.onload = (event) => {
+          imaAndrea.value = event.target.result
+        };
+      } else {
+        openModalupdateImg()
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Solo aceptamos imágenes en formato png, jpg y jpeg',
+          customClass: {
+            popup: 'popupModal'
+          }
+        })
+      }
+    }
+
+    const getMessages = async (friendID) => {
+      messageList.value = []
+      friendSelect.value = friendID
+      const { onResult } = await useQuery(gql`
+        query GetMessage($data: getMessagesInput) {
+          getMessage(data: $data) {
+            error
+            messages {
+              date
+              message
+              userID
+              userName
+            }
+            success
+          }
+        }
+      `,
+        {
+          data: {
+            isGroup: false,
+            chatId: "",
+            friendId: friendID,
+            userId: localStorage.userID
+          }
+        },
+        {
+          fetchPolicy: 'no-cache',
+        })
+
+      onResult(async (data) => {
+        if (data.data.getMessage.messages) {
+          messageList.value.push(...data.data.getMessage.messages)
+          setTimeout(goToBottom, 1)
+        }
+      })
+    }
+
+    const SENDMESSAGER = () => {
+         if (inputMessageContent.value !== '' && friendSelect.value !== ''){
+          sendMessage()
+          inputMessageContent.value = ''
+        }
+      }
+
+    const sendMessage = async () => {
+      const { mutate: Register } = useMutation(
+        gql`
+          mutation InsertMessageFriend($data: insertMessageFriend) {
+            insertMessageFriend(data: $data) {
+              error
+              success
+            }
+          }
+        `, 
+      )
+
+      Register({
+        "data": {
+          date: Date.now(),
+          friendId: friendSelect.value,
+          message: inputMessageContent.value,
+          userId: localStorage.userID,
+          userName: localStorage.userName
+        }
+      })
+    }
+
+    const sendCroissant = async () => {
+      const { mutate: Register } = useMutation(
+        gql`
+          mutation Croissant($userId: ID) {
+            Croissant(userId: $userId) {
+              error
+              success
+            }
+          }
+        `, 
+      )
+
+      Register({
+        userId: localStorage.userID
+      }).then((res) => {
+        if (res.data.Croissant.error != "false") {
+          Swal.fire({
+          customClass:{
+            popup: 'popupClass',
+          },
+          position: 'top-end',
+          icon: 'success',
+          title: res.data.Croissant.error,
+          showConfirmButton: false,
+          timer: 3000,
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          },
+          backdrop: `
+            rgba(8, 7, 16, 0.7)
+            url("nyan-cat.gif")
+            left top
+            no-repeat
+          `,
+          color: 'antiquewhite',
+        })
+        } else {
+          Swal.fire({
+          customClass:{
+            popup: 'popupClass',
+          },
+          position: 'top-end',
+          icon: 'success',
+          title: "Croissant Enviado 🥐",
+          showConfirmButton: false,
+          timer: 3000,
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          },
+          backdrop: `
+            rgba(8, 7, 16, 0.7)
+            url("nyan-cat.gif")
+            left top
+            no-repeat
+          `,
+          color: 'antiquewhite',
+        })
+        }
+      })
+    }
 
     watch(navBar.value, (newNavBar) => {
-      console.log("RECIBIENDO ACTTTT", newNavBar)
       navBarStatus.value = newNavBar.isOpen
     })
-
-
-    const friendsList = ref([
-      {
-        userName: "Ale",
-        connect: true,
-        img: imgSRC.value
-      },
-      {
-        userName: "Andrea",
-        connect: true,
-        img: cerezas
-      },
-      {
-        userName: "Jeremy",
-        connect: false,
-        img: cerezas
-      },
-      {
-        userName: "Katheren",
-        connect: true,
-        img: cerezas
-      },
-
-    ])
-
-    const messageList = ref([
-      {
-        messageContent: "Esto es una prueba1",
-        userName: "Andrea"
-      },
-      {
-        messageContent: "Esto es una prueba2",
-        userName: "Andrea"
-      },
-      {
-        messageContent: "Esto es una prueba3",
-        userName: "Ale"
-      },
-      {
-        messageContent: "Esto es una prueba4",
-        userName: "Ale"
-      },
-      {
-        messageContent: "Esto es una prueba5",
-        userName: "Andrea"
-      },
-      {
-        messageContent: "Esto es una prueba6",
-        userName: "Ale"
-      },
-      {
-        messageContent: "Esto es una prueba7",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba8",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba9",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba11",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba12",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba13",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba14",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba15",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba16",
-        userName: "Andrea"
-      }, {
-        messageContent: "Esto es una prueba17",
-        userName: "Andrea"
-      },
-    ])
 
     watch(darkMode.value, (dark) => {
       isDark.value = dark.isDark
       isChange.value = dark.isChange
-      console.log("CAMBIOOOO", isChange.value)
     })
+
 
     return {
       isDark,
+      idLocal,
+      inputMessageContent,
+      inputModal,
+      ownImg,
+      hasbenOpen,
+      modelOpen,
+      usarNameNav,
       isChange,
       friendsList,
       messageList,
@@ -251,8 +489,11 @@ export default {
       goToBottom,
       navBarStatus,
       closeSession,
-      imgSRC,
-      img
+      openModalupdateImg,
+      dropHandle,
+      getMessages,
+      SENDMESSAGER,
+      sendCroissant,
     }
   },
 
@@ -375,7 +616,7 @@ export default {
 }
 
 .connects {
-  color: antiquewhite;
+  color: #faebd7;
   font-family: 'Lobster', cursive;
   font-size: 30px;
   letter-spacing: 3px
@@ -403,6 +644,10 @@ export default {
   border: 4px solid antiquewhite;
   border-radius: 30px;
   margin-top: 15px;
+}
+
+.friendContent:hover {
+  cursor: pointer;
 }
 
 .friendImg {
@@ -549,6 +794,7 @@ li:last-child {
 }
 
 .sendSvg {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(16%) saturate(2727%) hue-rotate(309deg) brightness(102%) contrast(96%);
   position: relative;
   width: 40px;
   height: 40px;
@@ -557,6 +803,7 @@ li:last-child {
 }
 
 .emojiSvg {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(16%) saturate(2727%) hue-rotate(309deg) brightness(102%) contrast(96%);
   position: relative;
   width: 40px;
   height: 40px;
@@ -666,7 +913,7 @@ li:last-child {
 .option {
   margin-top: 20px;
   margin-left: 16px;
-  color: antiquewhite;
+  color: #faebd7;
   font-size: 20px;
   height: 40px;
   overflow: hidden;
@@ -691,6 +938,131 @@ li:last-child {
   cursor: pointer;
 }
 
+.editIcon {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  filter: brightness(0) saturate(100%) invert(99%) sepia(87%) saturate(702%) hue-rotate(300deg) brightness(106%) contrast(96%);
+  margin-left: 130px
+}
+
+.editIcon:hover {
+  cursor: pointer;
+}
+
+.imgModalOpen {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 44vw;
+  height: 44vh;
+  background: rgba(3, 27, 38, 1);
+  border-radius: 30px;
+  margin: 30vh 30vw 0 auto;
+  z-index: 999;
+  animation: zoomIn;
+  /* referring directly to the animation's @keyframe declaration */
+  animation-duration: 0.8s;
+  /* don't forget to set a duration! */
+}
+
+
+
+.imgModalClose {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 44vw;
+  height: 44vh;
+  background: rgba(3, 27, 38, 1);
+  border-radius: 30px;
+  margin: 30vh 30vw 0 auto;
+  z-index: 999;
+  animation: zoomOut;
+  /* referring directly to the animation's @keyframe declaration */
+  animation-duration: 0.8s;
+  /* don't forget to set a duration! */
+  animation-fill-mode: forwards;
+}
+
+.imgDrag {
+  margin: auto;
+  margin-top: 5%;
+  width: 80%;
+  height: 80%;
+  border: 6px dashed #faebd7;
+  border-radius: 30px;
+
+}
+
+.imgDrag:hover {
+  cursor: pointer;
+}
+
+.bgModal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10000;
+  background: #00000023;
+}
+
+.close {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  margin-top: 20px;
+  margin-right: 20px;
+  width: 32px;
+  height: 32px;
+}
+
+.close:hover {
+  cursor: pointer;
+}
+
+.close:before,
+.close:after {
+  position: absolute;
+  left: 15px;
+  content: ' ';
+  height: 33px;
+  width: 3px;
+  background-color: rgb(157, 37, 37);
+}
+
+.close:before {
+  transform: rotate(45deg);
+}
+
+.close:after {
+  transform: rotate(-45deg);
+}
+
+.titleDrop1 {
+  width: 100%;
+  color: rgba(250, 235, 215, 0.557);
+  text-align: center;
+  margin-top: 15%;
+  font-size: 18px;
+  line-height-step: 9px
+}
+
+.inputFile {
+  width: 80%;
+  height: 80%;
+  border-radius: 30px;
+  opacity: 0;
+  position: absolute;
+  z-index: 9999;
+}
+
+.inputFile:hover {
+  cursor: pointer;
+  display: none
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 </style>

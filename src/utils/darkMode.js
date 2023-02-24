@@ -13,6 +13,4 @@ export const darkMode = ref({
     }
 });
 
-console.log("averrr",typeof localStorage.dark)
-
 localStorage.dark === "true"? darkMode.value.changeView(): null
