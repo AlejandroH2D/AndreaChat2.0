@@ -5,6 +5,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import { splitLink } from "./Apollo/ApolloIndex";
 import { DefaultApolloClient } from "@vue/apollo-composable";
+import { EmojiPickerPlugin } from 'vue-emoji-picker'
 
 
 
@@ -21,5 +22,6 @@ const app = createApp({
 
     render: () => h(App),
 })
+app.use(EmojiPickerPlugin)
 app.use(router)
 app.mount('#app')

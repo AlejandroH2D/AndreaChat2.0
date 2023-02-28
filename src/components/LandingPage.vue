@@ -4,21 +4,23 @@
   <div :class="{ landing: !isDark, landingBlack: isDark }">
     <h1 class="title">Una nueva forma de encontrarse</h1>
     <p>Entra y disfruta de una nueva experiencia con todos tus amigos, familiares y conocidos.</p>
-    <button :class="{registro: !isDark, registroDark: isDark}" @click="toRegister">Regístrate Gratis!</button>
-    <div class="separadores">
-      <div class="linea"></div>
-      <p class="separador">O</p>
-      <div class="linea"></div>
+    <div class="contain">
+      <button :class="{ registro: !isDark, registroDark: isDark }" @click="toRegister">Regístrate Gratis!</button>
+      <div class="separadores">
+        <div class="linea"></div>
+        <p class="separador">O</p>
+        <div class="linea"></div>
+      </div>
+      <button :class="{ sesion: !isDark, sesionDark: isDark }" @click="toLogin">Inicia Sesión</button>
     </div>
-    <button :class="{sesion: !isDark, sesionDark: isDark}" @click="toLogin">Inicia Sesión</button>
     <div class="svgIm">
-      <img src="../../public/SvgLanding2.svg" alt="SVG" class="svgLanding">
-      <img src="../../public/Message.svg" alt="SVG" class="svgMessage">
+      <img src="../../public/SvgChat1.svg" alt="SVG" class="svgLanding">
+      <!-- <img src="../../public/Message.svg" alt="SVG" class="svgMessage">
       <img src="../../public/Message2.svg" alt="SVG" class="svgMessage2">
-      <img src="../../public/Message3.svg" alt="SVG" class="svgMessage3">
+      <img src="../../public/Message3.svg" alt="SVG" class="svgMessage3"> -->
       <div class="dots"></div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -66,15 +68,22 @@ export default {
 
 <style scoped>
 .landing {
+  position: relative;
   background: radial-gradient(circle at 86% 94%, #FAEBD7 0%, #3792A5 100%);
-  overflow: hidden;
   height: 100vh;
+  height: 100%;
+  min-height: 100vh;
+  padding-top: max(15vh, 50px);
+  box-sizing: border-box;
 }
 
 .landingBlack {
+  position: relative;
   background: radial-gradient(circle at 86% 89%, rgba(183, 170, 151, 1) 0%, rgba(8, 7, 16, 1) 53%);
-  overflow: hidden;
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
+  padding-top: max(15vh, 50px);
+  box-sizing: border-box;
 }
 
 .transition {
@@ -123,70 +132,33 @@ export default {
 }
 
 .title {
-  margin-top: 200px;
   margin-left: 30px;
   color: whitesmoke;
   font-family: 'Zeyada', cursive;
-  font-size: 75px;
+  font-size: max(5vw, 55px);
   letter-spacing: 1px;
 }
 
 .svgIm {
   position: absolute;
-  width: 600px;
-  height: 600px;
-  right: 25px;
-  bottom: 10px;
+  bottom: -50px;
+  right: 10px;
+  width: 50vw;
+  height: 36vw;
+  min-width: 500px;
+  min-height: 330px;
+  margin-bottom: 50px;
 }
 
-.svgMessage {
-  position: absolute;
-  z-index: 99;
-  width: 70px;
-  height: 70px;
-  right: 430px;
-  top: 50px;
-  transform: rotateZ(-10deg);
-  animation: animateMessage1 3s linear infinite;
-  animation-delay: 0.5S;
+.svgLanding {
+  width: 95%;
+  height: auto;
+
 }
-
-@keyframes animateMessage1 {
-  45% {
-
-    transform: rotateZ(15deg);
-
-  }
-
-  100% {
-    transform: rotateZ(-10deg);
-  }
-}
-
-.svgMessage2 {
-  position: absolute;
-  z-index: 99;
-  width: 70px;
-  height: 70px;
-  right: 250px;
-  top: -10px;
-  transform: rotateZ(-10deg);
-  animation: animateMessage1 3s linear infinite;
-}
-
-.svgMessage3 {
-  position: absolute;
-  z-index: 99;
-  width: 70px;
-  height: 70px;
-  right: 200px;
-  bottom: 420px;
-}
-
 
 p {
   margin-top: 30px;
-  font-size: 35px;
+  font-size: max(2.5vw, 27px);
   margin-left: 60px;
   max-width: 50vw;
   letter-spacing: 2px;
@@ -195,9 +167,17 @@ p {
   font-family: 'Lobster', cursive;
 }
 
+.contain {
+  display: flex;
+  align-items: center;
+  flex-direction: column;  
+  width: 50vw;
+  margin-top: 8vw;
+}
+
 .registro {
-  margin-top: 100px;
-  margin-left: 250px;
+  margin-left: auto;
+  margin-right: auto;
   border: none;
   background: antiquewhite;
   width: 230px;
@@ -210,8 +190,8 @@ p {
 }
 
 .registroDark {
-  margin-top: 100px;
-  margin-left: 250px;
+  margin-left: auto;
+  margin-right: auto;
   border: none;
   background: antiquewhite;
   width: 230px;
@@ -223,14 +203,16 @@ p {
   transition: 0.5s;
 }
 
-.registro:hover, .registroDark:hover,.sesion:hover, .sesionDark:hover{
+.registro:hover,
+.registroDark:hover,
+.sesion:hover,
+.sesionDark:hover {
   cursor: pointer;
   transform: scale(1.2);
 }
 
-.separadores{
+.separadores {
   display: flex;
-  margin-left: 195px
 }
 
 .separador {
@@ -238,7 +220,7 @@ p {
   margin-left: 0;
 }
 
-.linea{
+.linea {
   margin: auto 30px;
   width: 100px;
   height: 3px;
@@ -246,7 +228,6 @@ p {
 }
 
 .sesion {
-  margin-left: 290px;
   border: none;
   background: antiquewhite;
   width: 150px;
@@ -259,7 +240,6 @@ p {
 }
 
 .sesionDark {
-  margin-left: 290px;
   border: none;
   background: antiquewhite;
   width: 150px;

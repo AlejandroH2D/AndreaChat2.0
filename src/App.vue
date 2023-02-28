@@ -28,6 +28,7 @@ export default {
 * {
   margin: 0;
   padding: 0;
+  max-height:100%;
 }
 
 #app {

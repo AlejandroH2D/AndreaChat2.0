@@ -61,7 +61,7 @@
       </div>
       <div class="contentList">
         <li v-for="friend, i in friendsList" :key="friend.id" @click="getMessages(friend.id, i)">
-          <div class="friendContent">
+          <div :class="{friendContent: friendSelect != friend.id, friendContentSelect: friendSelect == friend.id}">
             <img :src="friend.img" alt="friendImg" class="friendImg">
             <h1 class="friendName">{{ friend.userName }}</h1>
             <div :class="{ friendConnect: friend.connect, friendDisconnect: !friend.connect }"></div>
@@ -83,7 +83,9 @@ import './AlertsCSS/imgModal.css'
 import Swal from 'sweetalert2'
 import './AlertsCSS/registerAlerts.css'
 
+
 export default {
+
   setup() {
     const modelOpen = ref(false)
     const hasbenOpen = ref(false)
@@ -101,7 +103,7 @@ export default {
     const messageList = ref([])
     const inputMessageContent = ref('')
 
-    var inputModalCounter = 0
+    // var inputModalCounter = 0
 
     onMounted(async () => {
       provideApolloClient(defaultClient)
@@ -265,9 +267,7 @@ export default {
     }
 
     const inputModal = async (e) => {
-      if (inputModalCounter == 0) {
-        inputModalCounter++
-      } else {
+      console.log("NOOOOOOOOO")
         var img = e.target.files[0]
         if (img.type.split("/")[1] == "png" || img.type.split("/")[1] == "jpg" || img.type.split("/")[1] == "jpeg") {
 
@@ -275,6 +275,7 @@ export default {
           reader.readAsDataURL(img);
           reader.onload = async (event) => {
             imaAndrea.value = event.target.result
+            console.log(imaAndrea.value)
             const { mutate: Register } = useMutation(
               gql`
               mutation Mutation($data: changeImgInput) {
@@ -290,6 +291,28 @@ export default {
                 "base64": imaAndrea.value,
                 "userId": localStorage.userID
               }
+            }).then((res) => {
+              if(res.data.changeImgUser.error == false){
+                openModalupdateImg()
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Ha ocurrido un error al cambiar la imagen',
+                  customClass: {
+                    popup: 'popupModal'
+                  }
+                })
+              } else {
+                openModalupdateImg()
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Cambio realizado',
+                  text: 'Se ha cambiado la imagen exitosamente',
+                  customClass: {
+                    popup: 'popupModal'
+                  }
+                })
+              }
             })
           };
         } else {
@@ -303,19 +326,58 @@ export default {
             }
           })
         }
-      }
-
     }
 
     const dropHandle = (e) => {
       var img = e.dataTransfer.files[0]
       if (img.type.split("/")[1] == "png" || img.type.split("/")[1] == "jpg" || img.type.split("/")[1] == "jpeg") {
-
+        console.log("IMGAAA",img)
         const reader = new FileReader();
         reader.readAsDataURL(img);
         reader.onload = (event) => {
           imaAndrea.value = event.target.result
+          const { mutate: Register } = useMutation(
+              gql`
+              mutation Mutation($data: changeImgInput) {
+                changeImgUser(data: $data) {
+                  error
+                  status
+                }
+              }
+            `
+            )
+            Register({
+              "data": {
+                "base64": imaAndrea.value,
+                "userId": localStorage.userID
+              }
+            }).then((res) => {
+              if(res.data.changeImgUser.error == false){
+                openModalupdateImg()
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Ha ocurrido un error al cambiar la imagen',
+                  customClass: {
+                    popup: 'popupModal'
+                  }
+                })
+              } else {
+                openModalupdateImg()
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Cambio realizado',
+                  text: 'Se ha cambiado la imagen exitosamente',
+                  customClass: {
+                    popup: 'popupModal'
+                  }
+                })
+              }
+            })
+
         };
+
+
       } else {
         openModalupdateImg()
         Swal.fire({
@@ -417,7 +479,7 @@ export default {
             popup: 'popupClass',
           },
           position: 'top-end',
-          icon: 'success',
+          icon: 'error',
           title: res.data.Croissant.error,
           showConfirmButton: false,
           timer: 3000,
@@ -486,6 +548,7 @@ export default {
       friendsList,
       messageList,
       isUp,
+      friendSelect,
       goToBottom,
       navBarStatus,
       closeSession,
@@ -515,7 +578,7 @@ export default {
 
 .landingBlack {
   position: relative;
-  background: radial-gradient(circle at 51% 100%, rgba(103, 98, 91, 1) 0%, rgba(3, 27, 38, 1) 100%);
+  background: radial-gradient(circle at 51% 100%, rgba(103, 98, 91, 1) 0%, #031b26 100%);
   overflow: hidden;
   height: 100vh;
 }
@@ -642,6 +705,23 @@ export default {
   width: 100%;
   height: 83px;
   border: 4px solid antiquewhite;
+
+  border-radius: 30px;
+  margin-top: 15px;
+}
+
+.friendContentSelect {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  height: 83px;
+  border: 4px solid;
+  border-image: 
+    linear-gradient(
+      to bottom, 
+      antiquewhite, 
+      rgba(0, 0, 0, 0)
+    ) 1 100%;
   border-radius: 30px;
   margin-top: 15px;
 }
@@ -708,7 +788,7 @@ li:last-child {
   top: 50%;
   padding-left: 20px;
   background: transparent;
-  border: 3px solid antiquewhite;
+  border: 3px solid #faebd7;
   transform: translateY(-50%);
   border-radius: 20px;
   font-size: 15px;
@@ -1063,6 +1143,7 @@ li:last-child {
   cursor: pointer;
   display: none
 }
+
 
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 </style>

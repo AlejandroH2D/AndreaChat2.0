@@ -103,6 +103,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .header {
+  position: relative;
   background: transparent;
   width: 100%;
   height: 60px;
@@ -136,16 +137,21 @@ export default {
 }
 
 .landingButtons {
-  margin-left: 25vh;
-  margin-top: auto;
-  margin-bottom: auto;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  
+  display: flex;
+  justify-content: flex-end;
 }
 
 button {
   position: relative;
-  width: 120px;
+  min-width: 80px;
+  width: 8vw;
   height: 35px;
-  margin-right: 50px;
+  margin-right: 3vw;
   border: 2px solid #12525e;
   border-radius: 20px;
   background: transparent;
@@ -168,22 +174,20 @@ button:hover {
 }
 
 .registerButton {
-  position: absolute;
   background: antiquewhite;
-  right: 0;
   transition: 1s;
   z-index: 999;
+  margin-right: 10px;
+
 }
 
 .registerButtonDark {
-  position: absolute;
+  margin-right: 10px;
   background: antiquewhite;
-  right: 0;
   border: 2px solid antiquewhite;
   color:rgba(8, 7, 16, 1);
   transition: 1s;
   z-index: 999;
-
 }
 
 
@@ -198,17 +202,17 @@ button:hover {
 }
 
 .viewButtonlight {
-  position: absolute;
+  position: relative;
+  top: 0;
   width: 80px;
-  height: 34px;
-  margin-left: 70px;
+  height: 35px;
 }
 
 .viewButtondark {
-  position: absolute;
+  position: relative;
+  top: 0;
   width: 80px;
-  height: 34px;
-  margin-left: 70px;
+  height: 35px;
   border: 2px solid antiquewhite;
 }
 
