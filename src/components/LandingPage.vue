@@ -172,7 +172,7 @@ p {
   align-items: center;
   flex-direction: column;  
   width: 50vw;
-  margin-top: 8vw;
+  margin-top: 12vh;
 }
 
 .registro {

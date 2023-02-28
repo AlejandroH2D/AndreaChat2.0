@@ -61,7 +61,7 @@
       </div>
       <div class="contentList">
         <li v-for="friend, i in friendsList" :key="friend.id" @click="getMessages(friend.id, i)">
-          <div :class="{friendContent: friendSelect != friend.id, friendContentSelect: friendSelect == friend.id}">
+          <div :class="{ friendContent: friendSelect != friend.id, friendContentSelect: friendSelect == friend.id }">
             <img :src="friend.img" alt="friendImg" class="friendImg">
             <h1 class="friendName">{{ friend.userName }}</h1>
             <div :class="{ friendConnect: friend.connect, friendDisconnect: !friend.connect }"></div>
@@ -108,7 +108,7 @@ export default {
     onMounted(async () => {
       provideApolloClient(defaultClient)
 
-      
+
       scrollObj = document.getElementsByClassName("messagesContent");
       scrollObj[0].scrollTop = scrollObj[0].scrollHeight;
       scrollObj[0].addEventListener('scroll', handleScroll)
@@ -268,16 +268,16 @@ export default {
 
     const inputModal = async (e) => {
       console.log("NOOOOOOOOO")
-        var img = e.target.files[0]
-        if (img.type.split("/")[1] == "png" || img.type.split("/")[1] == "jpg" || img.type.split("/")[1] == "jpeg") {
+      var img = e.target.files[0]
+      if (img.type.split("/")[1] == "png" || img.type.split("/")[1] == "jpg" || img.type.split("/")[1] == "jpeg") {
 
-          const reader = await new FileReader();
-          reader.readAsDataURL(img);
-          reader.onload = async (event) => {
-            imaAndrea.value = event.target.result
-            console.log(imaAndrea.value)
-            const { mutate: Register } = useMutation(
-              gql`
+        const reader = await new FileReader();
+        reader.readAsDataURL(img);
+        reader.onload = async (event) => {
+          imaAndrea.value = event.target.result
+          console.log(imaAndrea.value)
+          const { mutate: Register } = useMutation(
+            gql`
               mutation Mutation($data: changeImgInput) {
                 changeImgUser(data: $data) {
                   error
@@ -285,59 +285,59 @@ export default {
                 }
               }
             `
-            )
-            Register({
-              "data": {
-                "base64": imaAndrea.value,
-                "userId": localStorage.userID
-              }
-            }).then((res) => {
-              if(res.data.changeImgUser.error == false){
-                openModalupdateImg()
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Ha ocurrido un error al cambiar la imagen',
-                  customClass: {
-                    popup: 'popupModal'
-                  }
-                })
-              } else {
-                openModalupdateImg()
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Cambio realizado',
-                  text: 'Se ha cambiado la imagen exitosamente',
-                  customClass: {
-                    popup: 'popupModal'
-                  }
-                })
-              }
-            })
-          };
-        } else {
-          openModalupdateImg()
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Solo aceptamos imágenes en formato png, jpg y jpeg',
-            customClass: {
-              popup: 'popupModal'
+          )
+          Register({
+            "data": {
+              "base64": imaAndrea.value,
+              "userId": localStorage.userID
+            }
+          }).then((res) => {
+            if (res.data.changeImgUser.error == false) {
+              openModalupdateImg()
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Ha ocurrido un error al cambiar la imagen',
+                customClass: {
+                  popup: 'popupModal'
+                }
+              })
+            } else {
+              openModalupdateImg()
+              Swal.fire({
+                icon: 'success',
+                title: 'Cambio realizado',
+                text: 'Se ha cambiado la imagen exitosamente',
+                customClass: {
+                  popup: 'popupModal'
+                }
+              })
             }
           })
-        }
+        };
+      } else {
+        openModalupdateImg()
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Solo aceptamos imágenes en formato png, jpg y jpeg',
+          customClass: {
+            popup: 'popupModal'
+          }
+        })
+      }
     }
 
     const dropHandle = (e) => {
       var img = e.dataTransfer.files[0]
       if (img.type.split("/")[1] == "png" || img.type.split("/")[1] == "jpg" || img.type.split("/")[1] == "jpeg") {
-        console.log("IMGAAA",img)
+        console.log("IMGAAA", img)
         const reader = new FileReader();
         reader.readAsDataURL(img);
         reader.onload = (event) => {
           imaAndrea.value = event.target.result
           const { mutate: Register } = useMutation(
-              gql`
+            gql`
               mutation Mutation($data: changeImgInput) {
                 changeImgUser(data: $data) {
                   error
@@ -345,35 +345,35 @@ export default {
                 }
               }
             `
-            )
-            Register({
-              "data": {
-                "base64": imaAndrea.value,
-                "userId": localStorage.userID
-              }
-            }).then((res) => {
-              if(res.data.changeImgUser.error == false){
-                openModalupdateImg()
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Ha ocurrido un error al cambiar la imagen',
-                  customClass: {
-                    popup: 'popupModal'
-                  }
-                })
-              } else {
-                openModalupdateImg()
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Cambio realizado',
-                  text: 'Se ha cambiado la imagen exitosamente',
-                  customClass: {
-                    popup: 'popupModal'
-                  }
-                })
-              }
-            })
+          )
+          Register({
+            "data": {
+              "base64": imaAndrea.value,
+              "userId": localStorage.userID
+            }
+          }).then((res) => {
+            if (res.data.changeImgUser.error == false) {
+              openModalupdateImg()
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Ha ocurrido un error al cambiar la imagen',
+                customClass: {
+                  popup: 'popupModal'
+                }
+              })
+            } else {
+              openModalupdateImg()
+              Swal.fire({
+                icon: 'success',
+                title: 'Cambio realizado',
+                text: 'Se ha cambiado la imagen exitosamente',
+                customClass: {
+                  popup: 'popupModal'
+                }
+              })
+            }
+          })
 
         };
 
@@ -429,11 +429,14 @@ export default {
     }
 
     const SENDMESSAGER = () => {
-         if (inputMessageContent.value !== '' && friendSelect.value !== ''){
+      if (inputMessageContent.value !== '' && friendSelect.value !== '') {
+        const check = inputMessageContent.value.replace(/\s/g, '')
+        if (check.length != 0) {
           sendMessage()
           inputMessageContent.value = ''
         }
       }
+    }
 
     const sendMessage = async () => {
       const { mutate: Register } = useMutation(
@@ -444,7 +447,7 @@ export default {
               success
             }
           }
-        `, 
+        `,
       )
 
       Register({
@@ -467,7 +470,7 @@ export default {
               success
             }
           }
-        `, 
+        `,
       )
 
       Register({
@@ -475,52 +478,52 @@ export default {
       }).then((res) => {
         if (res.data.Croissant.error != "false") {
           Swal.fire({
-          customClass:{
-            popup: 'popupClass',
-          },
-          position: 'top-end',
-          icon: 'error',
-          title: res.data.Croissant.error,
-          showConfirmButton: false,
-          timer: 3000,
-          showClass: {
-            popup: 'animate__animated animate__fadeInDown'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp'
-          },
-          backdrop: `
+            customClass: {
+              popup: 'popupClass',
+            },
+            position: 'top-end',
+            icon: 'error',
+            title: res.data.Croissant.error,
+            showConfirmButton: false,
+            timer: 3000,
+            showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+            },
+            backdrop: `
             rgba(8, 7, 16, 0.7)
             url("nyan-cat.gif")
             left top
             no-repeat
           `,
-          color: 'antiquewhite',
-        })
+            color: 'antiquewhite',
+          })
         } else {
           Swal.fire({
-          customClass:{
-            popup: 'popupClass',
-          },
-          position: 'top-end',
-          icon: 'success',
-          title: "Croissant Enviado 🥐",
-          showConfirmButton: false,
-          timer: 3000,
-          showClass: {
-            popup: 'animate__animated animate__fadeInDown'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp'
-          },
-          backdrop: `
+            customClass: {
+              popup: 'popupClass',
+            },
+            position: 'top-end',
+            icon: 'success',
+            title: "Croissant Enviado 🥐",
+            showConfirmButton: false,
+            timer: 3000,
+            showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+            },
+            backdrop: `
             rgba(8, 7, 16, 0.7)
             url("nyan-cat.gif")
             left top
             no-repeat
           `,
-          color: 'antiquewhite',
-        })
+            color: 'antiquewhite',
+          })
         }
       })
     }
@@ -716,12 +719,10 @@ export default {
   width: 100%;
   height: 83px;
   border: 4px solid;
-  border-image: 
-    linear-gradient(
-      to bottom, 
-      antiquewhite, 
-      rgba(0, 0, 0, 0)
-    ) 1 100%;
+  border-image:
+    linear-gradient(to bottom,
+      antiquewhite,
+      rgba(0, 0, 0, 0)) 1 100%;
   border-radius: 30px;
   margin-top: 15px;
 }
