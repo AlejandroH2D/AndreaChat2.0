@@ -97,7 +97,7 @@ export default {
           isOpenContact.value = false
           InnerW.value = false
         } else {
-          navSmall.value = false
+          navSmall.value == true? openNavSmall(): null
           InnerWSmall.value = false
           InnerW.value = true
         }
@@ -365,13 +365,20 @@ button:hover {
   width: 30vw;
 }
 
+@media (max-width: 515px) {
+  button {
+    margin-right: 0;
+  }
+
+  .registerButtonDark:last-child, .registerButton:last-child{
+    margin: 10px;
+  }
+}
 
 
 @media (max-width: 315px) {
 
-  button {
-    margin-right: 0;
-  }
+  
 
   .titleLight {
     font-size: 11vw;
