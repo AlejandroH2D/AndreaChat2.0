@@ -27,19 +27,25 @@
       <button @click="toGithub" :class="{ buttonDark: isDark, contactButton: isOpenContact }">Github</button>
     </div>
     <div v-if="InnerWSmall" class="landingButtons">
-      <button :class="{ registerButton: !isDark, registerButtonDark: isDark, smallDark: InnerWSmall }" @click="openNavSmall">Menú</button>
+      <button :class="{ registerButton: !isDark, registerButtonDark: isDark, smallDark: InnerWSmall }"
+        @click="openNavSmall">Menú</button>
     </div>
   </header>
 
   <div :class="{ navBarSmall: navSmall, navBarSmallClose: !navSmall }" v-if="navSmall">
-    <button @click="toCreador" :class="{ buttonDark: isDark, contactButton: isOpenContact, buttonNav: navSmall}">Creador</button>
-      <button @click="toFreelancer" :class="{ buttonDark: isDark, contactButton: isOpenContact, buttonNav: navSmall }">Freelancer</button>
-      <button @click="toLinkedin" :class="{ buttonDark: isDark, contactButton: isOpenContact, buttonNav: navSmall }">Linkedin</button>
-      <button @click="toGithub" :class="{ buttonDark: isDark, contactButton: isOpenContact, buttonNav: navSmall }">Github</button>
-      <button :class="{ viewButtonlight: !isDark, viewButtondark: isDark, buttonNav: navSmall }" @click="changeView">
-        <div :class="{ light: !isDark, dark: isDark }"></div>
-      </button>
-      <button :class="{ registerButton: !isDark, registerButtonDark: isDark, buttonNav: navSmall }" @click="toCorrectPath" >{{ path }}</button>
+    <button @click="toCreador"
+      :class="{ buttonDark: isDark, contactButton: isOpenContact, buttonNav: navSmall }">Creador</button>
+    <button @click="toFreelancer"
+      :class="{ buttonDark: isDark, contactButton: isOpenContact, buttonNav: navSmall }">Freelancer</button>
+    <button @click="toLinkedin"
+      :class="{ buttonDark: isDark, contactButton: isOpenContact, buttonNav: navSmall }">Linkedin</button>
+    <button @click="toGithub"
+      :class="{ buttonDark: isDark, contactButton: isOpenContact, buttonNav: navSmall }">Github</button>
+    <button :class="{ viewButtonlight: !isDark, viewButtondark: isDark, buttonNav: navSmall }" @click="changeView">
+      <div :class="{ light: !isDark, dark: isDark }"></div>
+    </button>
+    <button :class="{ registerButton: !isDark, registerButtonDark: isDark, buttonNav: navSmall }"
+      @click="toCorrectPath">{{ path }}</button>
   </div>
 </template>
 
@@ -137,7 +143,7 @@ export default {
         var y = window.scrollY;
         window.onscroll = function () { window.scrollTo(x, y); };
       } else {
-        window.onscroll=function(){};
+        window.onscroll = function () { };
       }
       navSmall.value = !navSmall.value
     }
@@ -366,6 +372,14 @@ button:hover {
   button {
     margin-right: 0;
   }
+
+  .titleLight {
+    font-size: 11vw;
+    width: 100vw;
+    margin: auto 0;
+    text-align: center;
+  }
+
   .titleDark {
     font-size: 11vw;
     width: 100vw;
@@ -380,12 +394,13 @@ button:hover {
     justify-content: center;
   }
 
-  .registerButton{
+  .registerButton {
     position: relative;
     width: 50vw;
     margin: 0;
     min-width: 0;
   }
+
   .registerButtonDark {
     position: relative;
     width: 50vw;
@@ -395,5 +410,4 @@ button:hover {
 }
 
 
-@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
-</style>
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');</style>

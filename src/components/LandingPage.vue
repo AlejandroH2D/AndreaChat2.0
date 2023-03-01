@@ -75,8 +75,6 @@ export default {
   min-height: 100vh;
   padding-top: max(15vh, 50px);
   box-sizing: border-box;
-  min-width: 100vw;
-  height: 100%;
 }
 
 .landingBlack {
@@ -254,6 +252,12 @@ p {
 }
 
 @media (max-width: 840px) {
+
+  .landing{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
   .landingBlack {
     display: flex;
     justify-content: center;
