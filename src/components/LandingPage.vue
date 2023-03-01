@@ -4,6 +4,13 @@
   <div :class="{ landing: !isDark, landingBlack: isDark }">
     <h1 class="title">Una nueva forma de encontrarse</h1>
     <p>Entra y disfruta de una nueva experiencia con todos tus amigos, familiares y conocidos.</p>
+    <div class="svgIm">
+      <img src="../../public/SvgChat1.svg" alt="SVG" class="svgLanding">
+      <!-- <img src="../../public/Message.svg" alt="SVG" class="svgMessage">
+      <img src="../../public/Message2.svg" alt="SVG" class="svgMessage2">
+      <img src="../../public/Message3.svg" alt="SVG" class="svgMessage3"> -->
+      <div class="dots"></div>
+    </div>
     <div class="contain">
       <button :class="{ registro: !isDark, registroDark: isDark }" @click="toRegister">Regístrate Gratis!</button>
       <div class="separadores">
@@ -13,13 +20,7 @@
       </div>
       <button :class="{ sesion: !isDark, sesionDark: isDark }" @click="toLogin">Inicia Sesión</button>
     </div>
-    <div class="svgIm">
-      <img src="../../public/SvgChat1.svg" alt="SVG" class="svgLanding">
-      <!-- <img src="../../public/Message.svg" alt="SVG" class="svgMessage">
-      <img src="../../public/Message2.svg" alt="SVG" class="svgMessage2">
-      <img src="../../public/Message3.svg" alt="SVG" class="svgMessage3"> -->
-      <div class="dots"></div>
-    </div>
+
   </div>
 </template>
 
@@ -70,11 +71,12 @@ export default {
 .landing {
   position: relative;
   background: radial-gradient(circle at 86% 94%, #FAEBD7 0%, #3792A5 100%);
-  height: 100vh;
   height: 100%;
   min-height: 100vh;
   padding-top: max(15vh, 50px);
   box-sizing: border-box;
+  min-width: 100vw;
+  height: 100%;
 }
 
 .landingBlack {
@@ -170,7 +172,7 @@ p {
 .contain {
   display: flex;
   align-items: center;
-  flex-direction: column;  
+  flex-direction: column;
   width: 50vw;
   margin-top: 12vh;
 }
@@ -249,6 +251,63 @@ p {
   color: rgba(8, 7, 16, 1);
   font-weight: bold;
   transition: 0.5s;
+}
+
+@media (max-width: 840px) {
+  .landingBlack {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .title {
+    text-align: center;
+    margin: auto auto;
+    min-width: 0;
+  }
+
+  p {
+    position: relative;
+    text-align: center;
+    margin: 0 0;
+    max-width: 100vw
+  }
+
+  .svgIm {
+    position: relative;
+    width: 100vw;
+    min-width: 0;
+    justify-content: center;
+    top: 0;
+    right: 0;
+    margin-bottom: 5px;
+    min-height: 200px
+  }
+
+  .svgLanding {
+    width: 100%;
+    height: auto;
+  }
+
+  .contain{
+    margin: 20px 0 30px 0;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .linea {
+    width: 30vw;
+  }
+}
+
+@media (max-width: 350px) {
+  .separadores{
+    width: 100vw
+  }
+
+  .registroDark{
+    width: 70vw
+  }
 }
 
 

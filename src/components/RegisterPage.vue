@@ -369,7 +369,8 @@ button {
   font-family: 'Lobster', cursive;
   color: antiquewhite;
   right: 160px;
-  top: 200px
+  top: 200px;
+  user-select: none;
 }
 
 .subtitle2 {
@@ -379,7 +380,9 @@ button {
   font-family: 'Lobster', cursive;
   color: antiquewhite;
   right: 70px;
-  top: 310px
+  top: 310px;
+  user-select: none;
+
 }
 
 .loader {
@@ -420,6 +423,7 @@ button {
     transform: rotate(360deg);
   }
 }
+
 
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 </style>

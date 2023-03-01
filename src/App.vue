@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { onMounted } from 'vue';
 import HeaderTop from './components/HeaderTop.vue'
 
 export default {
@@ -20,6 +21,17 @@ export default {
     HeaderTop
   },
   setup(){
+    
+    onMounted(() => {
+      const device = navigator.userAgent
+      const regexp = /android|iphone|kindle|ipad/i
+      const isMobileDevice = regexp.test(device)
+      console.log(isMobileDevice)
+
+    })
+
+ 
+
   }
 }
 </script>
@@ -32,7 +44,7 @@ export default {
 }
 
 #app {
-
+  min-width: 100vw;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

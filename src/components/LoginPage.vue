@@ -37,6 +37,7 @@ import { defaultClient } from '../main'
 import './AlertsCSS/loginAlerts.css'
 import Swal from 'sweetalert2'
 
+
 export default {
 
   setup() {
@@ -46,7 +47,7 @@ export default {
     const password = ref('')
     onMounted(() => {
       provideApolloClient(defaultClient)
-      console.log("loooooooollllllllll")
+      console.log(window.innerWidth)
     })
 
 
@@ -58,6 +59,7 @@ export default {
       isChange.value = dark.isChange
     })
 
+   
     const toHome = () => {
       window.location.href = "#/";
     }
@@ -189,6 +191,24 @@ export default {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+}
+
+@media (min-width: 700px) {
+  .mainDark {
+  background: linear-gradient(66deg, rgb(104, 64, 5) 0%, rgba(8, 7, 16, 1) 66%);
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+}
+
+@media (min-width: 1000px) {
+  .mainDark {
+  background: linear-gradient(66deg, rgb(104, 5, 5) 0%, rgba(8, 7, 16, 1) 66%);
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
 }
 
 .main {
@@ -387,7 +407,8 @@ button {
   font-family: 'Lobster', cursive;
   color: antiquewhite;
   right: 160px;
-  top: 200px
+  top: 200px;
+  user-select: none;
 }
 
 .subtitle2 {
@@ -397,7 +418,8 @@ button {
   font-family: 'Lobster', cursive;
   color: antiquewhite;
   right: 70px;
-  top: 310px
+  top: 310px;
+  user-select: none;
 }
 
 .loader {
