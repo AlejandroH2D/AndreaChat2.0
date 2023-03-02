@@ -51,7 +51,7 @@
 
 <script>
 import { darkMode } from '@/utils/darkMode'
-import { navBar } from '@/utils/navBar'
+import { navBar, InnerForNav } from '@/utils/navBar'
 import { watch, ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -63,6 +63,7 @@ export default {
     const InnerWSmall = ref()
     const isOpenContact = ref(false)
     const navSmall = ref(false)
+    // const InnerWSmallforIndex = ref(navBar.value.InnerWSmall)
     const returnButton = {
       "/register": {
         button: "Inicia Sesión",
@@ -83,22 +84,25 @@ export default {
     onMounted(() => {
       window.addEventListener('resize', Resize)
       window.innerWidth < 860 && window.innerWidth > 515 ? InnerW.value = true : InnerW.value = false
-      window.innerWidth < 860 && window.innerWidth < 515 ? InnerWSmall.value = true : InnerWSmall.value = false
+      window.innerWidth < 860 && window.innerWidth <= 515 ? InnerWSmall.value = true : InnerWSmall.value = false
+      window.innerWidth <= 515 ? InnerForNav.value.setInnerWValue(true)  : InnerForNav.value.setInnerWValue(false)
     })
 
     const OpenContact = () => {
       isOpenContact.value = !isOpenContact.value
     }
 
-    const Resize = (e) => {
+    const Resize = () => {
       if (window.innerWidth < 860) {
-        if (window.innerWidth < 515) {
+        if (window.innerWidth <= 515) {
           InnerWSmall.value = true
           isOpenContact.value = false
+          InnerForNav.value.setInnerWValue(true)
           InnerW.value = false
         } else {
           navSmall.value == true? openNavSmall(): null
           InnerWSmall.value = false
+          InnerForNav.value.setInnerWValue(false)
           InnerW.value = true
         }
       }
@@ -106,11 +110,9 @@ export default {
         InnerW.value = false
         isOpenContact.value = false
       }
-
-      console.log("CAMBIO", e.target.innerWidth, InnerW.value)
     }
     const route = useRoute();
-    const path = computed(() => returnButton[route.path] ? returnButton[route.path].button : "Menú")
+    const path = computed(() => returnButton[route.path] ? returnButton[route.path].button : InnerWSmall.value? "Opciones": "Menú")
 
     const isDark = ref(darkMode.value.isDark)
     const navBarStatus = ref(navBar.value.isOpen)
@@ -127,7 +129,10 @@ export default {
       window.open("https://github.com/alexrojas50", '_blank')
     }
     const toCorrectPath = () => {
-      path.value == "Menú" ? navBar.value.openCloseNav() : window.location.href = returnButton[route.path].link;
+      if (path.value == "Menú" || path.value == "Opciones") {
+
+        navBar.value.openCloseNav()
+      } else {window.location.href = returnButton[route.path].link;}
     }
     const toHome = () => {
       window.location.href = "#/";
@@ -271,8 +276,6 @@ button:hover {
   z-index: 999;
 }
 
-
-
 .registerButton:hover {
   color: #12525e;
   border: 2px solid #12525e;
@@ -372,6 +375,10 @@ button:hover {
 
   .registerButtonDark:last-child, .registerButton:last-child{
     margin: 10px;
+  }
+
+  .smallDark{
+    margin-right: 20px !important;
   }
 }
 

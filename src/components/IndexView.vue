@@ -74,7 +74,7 @@
 <script>
 import { ref, watch, onMounted } from 'vue'
 import { darkMode } from '@/utils/darkMode'
-import { navBar } from '@/utils/navBar'
+import { navBar, InnerForNav } from '@/utils/navBar'
 import { provideApolloClient } from '@vue/apollo-composable'
 import { defaultClient } from '../main'
 import { useQuery, useMutation, useSubscription } from '@vue/apollo-composable'
@@ -94,6 +94,7 @@ export default {
     const isDark = ref(darkMode.value.isDark)
     const isChange = ref(darkMode.value.isChange)
     const navBarStatus = ref(navBar.value.isOpen)
+    const InnerW = ref(InnerForNav.value.InnerWSmall)
     const usarNameNav = ref('')
     const imaAndrea = ref('')
     const ownImg = ref('')
@@ -108,6 +109,7 @@ export default {
     onMounted(async () => {
       provideApolloClient(defaultClient)
 
+      console.log("Xdddd",InnerW.value)
 
       scrollObj = document.getElementsByClassName("messagesContent");
       scrollObj[0].scrollTop = scrollObj[0].scrollHeight;
@@ -532,6 +534,11 @@ export default {
       navBarStatus.value = newNavBar.isOpen
     })
 
+    watch(InnerForNav.value, (newInnerW) => {
+      InnerW.value = newInnerW.InnerWSmall
+      console.log("CAMBIANDO INNERW", InnerW.value)
+    })
+
     watch(darkMode.value, (dark) => {
       isDark.value = dark.isDark
       isChange.value = dark.isChange
@@ -708,7 +715,7 @@ export default {
   width: 100%;
   height: 83px;
   border: 4px solid antiquewhite;
-
+  overflow: auto;
   border-radius: 30px;
   margin-top: 15px;
 }
@@ -732,10 +739,11 @@ export default {
 }
 
 .friendImg {
-  width: 64px;
-  height: 64px;
+  width: 4.222vw;
+  height: auto;
+  min-width: 50px;
   border-radius: 50%;
-  margin: auto 0 auto 15px;
+  margin: auto 0 auto 1px;
   border: 3px solid rgba(3, 27, 38, 1);
 }
 
@@ -751,7 +759,7 @@ li:last-child {
   margin: auto 0;
   color: antiquewhite;
   margin: auto 0 auto 15px;
-  width: 55%;
+
 }
 
 .friendConnect {
@@ -833,7 +841,7 @@ li:last-child {
 
 .ownMessage {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   position: relative;
   right: 0;
   margin: 23px 3px 23px 90px;
@@ -841,7 +849,7 @@ li:last-child {
 
 .frienMessage {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   left: 0;
   margin: 20px;
   margin-right: 90px;

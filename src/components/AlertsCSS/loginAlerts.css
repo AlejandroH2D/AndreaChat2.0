@@ -10,3 +10,9 @@
     margin-top: 10px;
     border: 2px solid antiquewhite;
 } 
+
+@media (max-width: 620px) {
+    .popupClass {
+        width: 80vw !important;
+    } 
+}

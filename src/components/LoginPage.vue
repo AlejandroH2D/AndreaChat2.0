@@ -2,10 +2,12 @@
   <div :class="{ transition: isDark && isChange }"></div>
   <div :class="{ transitionLight: !isDark && isChange }"></div>
   <div :class="{ main: !isDark, mainDark: isDark }">
-    <span class="loader" v-if="loading"></span>
-    <div class="background">
+    <div class="loaderContainer">
+      <span class="loader" v-if="loading"></span>
     </div>
     <form @submit.prevent="initSession">
+      <h1 class="subtitle1">ANDREA</h1>
+      <h1 class="subtitle2">CHAT</h1>
       <h3>Inicio de Sesión</h3>
       <label for="username">Nombre de usuario</label>
       <input type="text" placeholder="Ingresa tu nombre de usuario" id="username" v-model="userName">
@@ -21,8 +23,7 @@
         </div>
       </div>
     </form>
-    <h1 class="subtitle1">ANDREA</h1>
-    <h1 class="subtitle2">CHAT</h1>
+
   </div>
 </template>
 
@@ -59,7 +60,7 @@ export default {
       isChange.value = dark.isChange
     })
 
-   
+
     const toHome = () => {
       window.location.href = "#/";
     }
@@ -92,68 +93,62 @@ export default {
 
       onResult(queryResult => {
 
-        if(queryResult.data.login.error) {
+        if (queryResult.data.login.error) {
           Swal.fire({
-          customClass:{
-            confirmButton:'test-class',
-            popup: 'popupClass',
-          },
-          position: 'top-end',
-          icon: 'error',
-          title: queryResult.data.login.error,
-          showConfirmButton: false,
-          showClass: {
-            popup: 'animate__animated animate__fadeInDown'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp'
-          },
-          backdrop: `
-            rgba(8, 7, 16, 0.7)
-            url("nyan-cat.gif")
-            left top
-            no-repeat
-          `,
-          color: 'antiquewhite',
-          timer: 2000,
-          allowOutsideClick: false
-        })
+            customClass: {
+              confirmButton: 'test-class',
+              popup: 'popupClass',
+            },
+            position: window.innerWidth < 620? "top": "top-end",
+            icon: 'error',
+            title: queryResult.data.login.error,
+            showConfirmButton: false,
+            showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+            },
+            color: 'antiquewhite',
+            timer: 2000,
+            allowOutsideClick: false
+          })
         } else {
           Swal.fire({
-          customClass:{
-            confirmButton:'test-class',
-            popup: 'popupClass',
-          },
-          position: 'top-end',
-          icon: 'success',
-          title: 'Bienvenido :D',
-          showConfirmButton: false,
-          showClass: {
-            popup: 'animate__animated animate__fadeInDown'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp'
-          },
-          backdrop: `
+            customClass: {
+              confirmButton: 'test-class',
+              popup: 'popupClass',
+            },
+            position: window.innerWidth < 620? "top": "top-end",
+            icon: 'success',
+            title: 'Bienvenido :D',
+            showConfirmButton: false,
+            showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+            },
+            backdrop: `
             rgba(8, 7, 16, 0.7)
             url("nyan-cat.gif")
-            left top
+            ${window.innerWidth < 620? "left bottom": "left top"}
             no-repeat
           `,
-          color: 'antiquewhite',
-          timer: 2000,
-          allowOutsideClick: false
-        })
-        localStorage.token = queryResult.data.login.token
-        localStorage.userName = queryResult.data.login.userName
-        localStorage.userID = queryResult.data.login.userID
-        setTimeout(() => {
-          window.location.href = "/#/index"
-        }, 2100)
+            color: 'antiquewhite',
+            timer: 2000,
+            allowOutsideClick: false
+          })
+          localStorage.token = queryResult.data.login.token
+          localStorage.userName = queryResult.data.login.userName
+          localStorage.userID = queryResult.data.login.userID
+          setTimeout(() => {
+            window.location.href = "/#/index"
+          }, 2100)
         }
-        
+
         loading.value = false
-        
+
         console.log("RESULTTTT", queryResult)
       })
 
@@ -189,33 +184,25 @@ export default {
 .mainDark {
   background: linear-gradient(66deg, rgba(183, 170, 151, 1) 0%, rgba(8, 7, 16, 1) 66%);
   width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
-@media (min-width: 700px) {
-  .mainDark {
-  background: linear-gradient(66deg, rgb(104, 64, 5) 0%, rgba(8, 7, 16, 1) 66%);
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-}
-
-@media (min-width: 1000px) {
-  .mainDark {
-  background: linear-gradient(66deg, rgb(104, 5, 5) 0%, rgba(8, 7, 16, 1) 66%);
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
+  height: auto;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding-top: max(15vh, 70px);
+  padding-bottom: 30px;
+  display: flex;
+  justify-content: center;
 }
 
 .main {
   background: linear-gradient(44deg, rgba(183, 170, 151, 1) 13%, rgba(55, 146, 165, 1) 100%);
   width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  height: auto;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding-top: max(15vh, 70px);
+  padding-bottom: 30px;
+  display: flex;
+  justify-content: center;
 }
 
 .transition {
@@ -263,47 +250,11 @@ export default {
   height: 0;
 }
 
-.background {
-  background-color: transparent;
-  width: 430px;
-  height: 520px;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%;
-}
-
-.background .shape {
-  height: 200px;
-  width: 200px;
-  position: absolute;
-  border-radius: 50%;
-}
-
-.shape:first-child {
-  background: linear-gradient(135deg,
-      rgba(3, 27, 38, 1),
-      rgb(14, 82, 113));
-  left: -80px;
-  top: -80px;
-}
-
-.shape:last-child {
-  background: linear-gradient(135deg,
-      rgb(205, 160, 101),
-      antiquewhite);
-  right: -80px;
-  bottom: -80px;
-}
-
 form {
   height: 520px;
-  width: 400px;
+  width: 38vw;
   background-color: rgba(255, 255, 255, 0.13);
-  position: absolute;
-  transform: translate(-50%, -50%);
-  top: 50%;
-  left: 50%;
+  position: relative;
   border-radius: 10px;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.1);
@@ -334,6 +285,7 @@ label {
 }
 
 input {
+  position: relative;
   display: block;
   height: 50px;
   width: 100%;
@@ -343,6 +295,7 @@ input {
   margin-top: 8px;
   font-size: 14px;
   font-weight: 300;
+  z-index: 2;
 }
 
 ::placeholder {
@@ -370,6 +323,8 @@ button {
 .social {
   margin-top: 30px;
   display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .social div {
@@ -406,8 +361,8 @@ button {
   opacity: 0.2;
   font-family: 'Lobster', cursive;
   color: antiquewhite;
-  right: 160px;
-  top: 200px;
+  right: -20vw;
+  top: 6vh;
   user-select: none;
 }
 
@@ -417,23 +372,32 @@ button {
   opacity: 0.2;
   font-family: 'Lobster', cursive;
   color: antiquewhite;
-  right: 70px;
-  top: 310px;
+  right: -22vw;
+  top: 18vh;
   user-select: none;
+}
+
+.loaderContainer{
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  top: 53%;
 }
 
 .loader {
   position: relative;
   width: 48px;
   height: 48px;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 50%;
   display: inline-block;
   border-top: 4px solid antiquewhite;
   border-right: 4px solid transparent;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
-  margin-top: 45%;
-  margin-left: 48.3%;
   z-index: 999;
 }
 
@@ -458,6 +422,68 @@ button {
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 860px) {
+  form {
+    width: 60vw
+  }
+
+  .subtitle1 {
+    font-size: 10vw;
+    right: -16vw;
+    top: 7vw;
+  }
+
+  .subtitle2 {
+    font-size: 10vw;
+    right: -16vw;
+    top: 18vw;
+  }
+}
+
+@media (max-width: 516px) {
+
+  .social {
+    margin-top: 30px;
+    display: block;
+    justify-content: center;
+  }
+
+  .social .fb {
+    position: relative;
+    margin-left: 0px;
+  }
+
+  .social div {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  form {
+    padding: 30px;
+    height: 100%;
+    width: 80vw;
+  }
+
+  .subtitle1, .subtitle2{
+    font-size: 0;
+    position: relative;
+  }
+}
+
+@media (max-width: 315px) {
+  form {
+    margin-top: 60px
+  }
+
+  .mainDark{
+    padding-top:  70px;
+  }
+
+  .main{
+    padding-top:  70px;
   }
 }
 

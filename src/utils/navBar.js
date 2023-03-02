@@ -5,6 +5,13 @@ export const navBar = ref({
     openCloseNav() {
         this.isOpen = !this.isOpen;
         console.log("abriendo o cerrando navbarrrr", this.isOpen)
-
-    }
+    },
+  
 });
+
+export const InnerForNav = ref({
+    InnerWSmall: false,
+    setInnerWValue (value) {
+        this.InnerWSmall = value
+    }
+})
