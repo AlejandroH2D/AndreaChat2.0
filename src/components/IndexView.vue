@@ -618,7 +618,7 @@ export default {
   position: relative;
   background: radial-gradient(circle at 51% 100%, rgba(103, 98, 91, 1) 0%, #031b26 100%);
   overflow: hidden;
-  height: 100vh;
+  height: 100dvh;
 }
 
 .transition {
@@ -1242,6 +1242,12 @@ li:last-child {
   .messagesContent{
     height: calc(100% - 110px);
   }
+}
+
+@media (max-width: 515px) {
+  /* .chatDark{
+    height: 85% !important;
+  } */
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
