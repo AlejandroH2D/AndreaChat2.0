@@ -21,8 +21,11 @@
         <div class="optionsContent">
           <div class="option">UserName</div>
           <div class="option">Password</div>
+          <div class="option" v-if="InnerWBig" @click="openFriendsList">Amigos</div>
+          <div class="option" v-if="InnerW" @click="closeOptions">Cerrar Opciones</div>
           <div class="option" @click="sendCroissant">Enviar Croissant a Jeremy</div>
           <div class="optionClose" @click="closeSession">Cerra Sesión</div>
+          
         </div>
       </div>
     </div>
@@ -55,16 +58,19 @@
         </div>
       </div>
     </div>
-    <div :class="{ friendsDark: isDark, friendsLight: !isDark }">
-      <div class="title">
+    <div :class="{ friendsDark: isDark, friendsLight: !isDark, openList: openFriends }" v-if="!InnerWBig || openFriends">
+      <div :class="{title: true, titleList: openFriends}">
         <h1 class="connects">Amigos</h1>
+        <h1 class="connects2" v-if="openFriends" @click="openFriendsList">Cerrar Lista</h1>
       </div>
       <div class="contentList">
         <li v-for="friend, i in friendsList" :key="friend.id" @click="getMessages(friend.id, i)">
           <div :class="{ friendContent: friendSelect != friend.id, friendContentSelect: friendSelect == friend.id }">
             <img :src="friend.img" alt="friendImg" class="friendImg">
             <h1 class="friendName">{{ friend.userName }}</h1>
-            <div :class="{ friendConnect: friend.connect, friendDisconnect: !friend.connect }"></div>
+            <div class="StatusFriend">
+              <div :class="{ friendConnect: friend.connect, friendDisconnect: !friend.connect }"></div>
+            </div>
           </div>
         </li>
       </div>
@@ -74,7 +80,7 @@
 <script>
 import { ref, watch, onMounted } from 'vue'
 import { darkMode } from '@/utils/darkMode'
-import { navBar, InnerForNav } from '@/utils/navBar'
+import { navBar, InnerForNav, InnerBigForNav } from '@/utils/navBar'
 import { provideApolloClient } from '@vue/apollo-composable'
 import { defaultClient } from '../main'
 import { useQuery, useMutation, useSubscription } from '@vue/apollo-composable'
@@ -95,6 +101,7 @@ export default {
     const isChange = ref(darkMode.value.isChange)
     const navBarStatus = ref(navBar.value.isOpen)
     const InnerW = ref(InnerForNav.value.InnerWSmall)
+    const InnerWBig = ref(InnerBigForNav.value.InnerW)
     const usarNameNav = ref('')
     const imaAndrea = ref('')
     const ownImg = ref('')
@@ -103,13 +110,14 @@ export default {
     const idLocal = ref('')
     const messageList = ref([])
     const inputMessageContent = ref('')
+    const openFriends = ref(false)
 
     // var inputModalCounter = 0
 
     onMounted(async () => {
       provideApolloClient(defaultClient)
 
-      console.log("Xdddd",InnerW.value)
+      console.log("Xdddd", InnerW.value)
 
       scrollObj = document.getElementsByClassName("messagesContent");
       scrollObj[0].scrollTop = scrollObj[0].scrollHeight;
@@ -530,6 +538,16 @@ export default {
       })
     }
 
+    const openFriendsList = () => {
+      navBar.value.isOpen ? navBar.value.openCloseNav() : null
+      
+      openFriends.value = !openFriends.value
+    }
+
+    const closeOptions = () => {
+      navBar.value.openCloseNav()
+    }
+
     watch(navBar.value, (newNavBar) => {
       navBarStatus.value = newNavBar.isOpen
     })
@@ -537,6 +555,11 @@ export default {
     watch(InnerForNav.value, (newInnerW) => {
       InnerW.value = newInnerW.InnerWSmall
       console.log("CAMBIANDO INNERW", InnerW.value)
+    })
+
+    watch(InnerBigForNav.value, (newInnerW) => {
+      InnerWBig.value = newInnerW.InnerW
+      console.log("CAMBIANDO INNERBIGGGGW", InnerWBig.value)
     })
 
     watch(darkMode.value, (dark) => {
@@ -549,6 +572,9 @@ export default {
       isDark,
       idLocal,
       inputMessageContent,
+      InnerWBig,
+      InnerW,
+      openFriends,
       inputModal,
       ownImg,
       hasbenOpen,
@@ -567,6 +593,8 @@ export default {
       getMessages,
       SENDMESSAGER,
       sendCroissant,
+      openFriendsList,
+      closeOptions,
     }
   },
 
@@ -640,9 +668,11 @@ export default {
 
 .chatDark {
   position: absolute;
+  display: block;
   margin-top: 70px;
   width: 70%;
   height: 90%;
+  overflow: hidden;
 }
 
 .chatLight {
@@ -655,7 +685,7 @@ export default {
 .friendsDark {
   position: absolute;
   right: 0;
-  width: 28%;
+  width: max(28%, 315px);
   height: 100%;
   margin-top: 75px;
   overflow: hidden;
@@ -676,6 +706,26 @@ export default {
   ;
   background: rgba(3, 27, 38, 0.6);
   border-top-left-radius: 25px;
+}
+
+.openList{
+  background: #031b26;
+  width: 100% !important;
+  border-radius: 0;
+}
+
+.titleList{
+  display: flex;
+  justify-content: space-between;
+  padding-left: 10px;
+}
+
+.connects2{
+  color: rgb(156, 44, 44);
+  font-family: 'Lobster', cursive;
+  font-size: 30px;
+  letter-spacing: 3px;
+  margin-right: 20px;
 }
 
 .title {
@@ -699,32 +749,33 @@ export default {
   margin-top: 20px;
   margin-left: 20px;
   margin-right: 20px;
-  padding-right: 10px;
-  padding-left: 10px;
   height: 90%;
   overflow-y: scroll;
   height: 100%;
-  padding-right: -17px;
   /* Increase/decrease this value for cross-browser compatibility */
 
 }
 
 .friendContent {
-  box-sizing: border-box;
   display: flex;
+  align-items: center;
   width: 100%;
-  height: 83px;
+  height: max(5vw, 64px);
   border: 4px solid antiquewhite;
   overflow: auto;
   border-radius: 30px;
   margin-top: 15px;
+  padding-right: 10px;
+  box-sizing: border-box;
 }
 
 .friendContentSelect {
   box-sizing: border-box;
   display: flex;
+  align-items: center;
   width: 100%;
-  height: 83px;
+  height: max(5vw, 64px);
+  overflow: auto;
   border: 4px solid;
   border-image:
     linear-gradient(to bottom,
@@ -732,6 +783,7 @@ export default {
       rgba(0, 0, 0, 0)) 1 100%;
   border-radius: 30px;
   margin-top: 15px;
+  padding-right: 10px;
 }
 
 .friendContent:hover {
@@ -762,32 +814,40 @@ li:last-child {
 
 }
 
+.StatusFriend {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  margin-left: 5px;
+}
+
 .friendConnect {
   width: 25px;
   height: 25px;
-  margin: auto 0;
+  min-width: 25px;
+  margin-left: 10%;
+  margin-right: 10%;
   border-radius: 50%;
   background: green;
   border: 3px solid rgba(3, 27, 38, 1);
-
 }
 
 .friendDisconnect {
+  margin-left: 10%;
+  margin-right: 10%;
   width: 25px;
   height: 25px;
-  margin-top: 22px;
+  min-width: 25px;
   border-radius: 50%;
   background: red;
   border: 3px solid rgba(3, 27, 38, 1);
 }
 
 .inputContent {
-  position: absolute;
   display: flex;
   justify-content: space-around;
   width: 100%;
   height: 60px;
-  bottom: 0;
 }
 
 .inputMessage {
@@ -835,7 +895,7 @@ li:last-child {
   margin-top: 5px;
   display: block;
   width: 100%;
-  height: 90%;
+  height: calc(100% - 80px);
   overflow-y: scroll;
 }
 
@@ -871,15 +931,22 @@ li:last-child {
 .ownMessageContent {
   border: 3px solid rgba(3, 27, 38, 1);
   border-radius: 30px;
-  background-color: rgba(3, 27, 38, 0.5)
+  background-color: rgba(3, 27, 38, 0.5);
+  max-width: 80%;
+  width: auto;
+  padding: 10px;
 }
 
 
 .textOwnMessage {
   font-size: 18px;
-  margin: 10px;
   color: antiquewhite;
-  margin: 12px
+  width: 100%;
+  height: auto;
+  word-wrap: break-word;
+  margin: auto;
+  white-space: wrap;
+  overflow: hidden;
 }
 
 .sendSvg {
@@ -1153,6 +1220,29 @@ li:last-child {
   display: none
 }
 
+@media (max-width: 1125px) {
+  .chatDark {
+    width: calc(100vw - 338px)
+  }
+}
+
+@media (max-width: 859px) {
+  .chatDark{
+    width: 100%;
+  }
+}
+
+@media (max-height: 570px) {
+  .messagesContent{
+    height: calc(100% - 100px);
+  }
+}
+
+@media (max-height: 360px) {
+  .messagesContent{
+    height: calc(100% - 110px);
+  }
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 </style>

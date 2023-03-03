@@ -51,7 +51,7 @@
 
 <script>
 import { darkMode } from '@/utils/darkMode'
-import { navBar, InnerForNav } from '@/utils/navBar'
+import { navBar, navBarSmall, InnerForNav, InnerBigForNav } from '@/utils/navBar'
 import { watch, ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -62,7 +62,7 @@ export default {
     const InnerW = ref()
     const InnerWSmall = ref()
     const isOpenContact = ref(false)
-    const navSmall = ref(false)
+    const navSmall = ref(navBarSmall.value.isOpen)
     // const InnerWSmallforIndex = ref(navBar.value.InnerWSmall)
     const returnButton = {
       "/register": {
@@ -84,8 +84,10 @@ export default {
     onMounted(() => {
       window.addEventListener('resize', Resize)
       window.innerWidth < 860 && window.innerWidth > 515 ? InnerW.value = true : InnerW.value = false
+      window.innerWidth < 860 ? InnerBigForNav.value.setInnerWValue(true) : InnerBigForNav.value.setInnerWValue(false)
       window.innerWidth < 860 && window.innerWidth <= 515 ? InnerWSmall.value = true : InnerWSmall.value = false
-      window.innerWidth <= 515 ? InnerForNav.value.setInnerWValue(true)  : InnerForNav.value.setInnerWValue(false)
+      window.innerWidth <= 515 ? InnerForNav.value.setInnerWValue(true) : InnerForNav.value.setInnerWValue(false)
+
     })
 
     const OpenContact = () => {
@@ -100,19 +102,21 @@ export default {
           InnerForNav.value.setInnerWValue(true)
           InnerW.value = false
         } else {
-          navSmall.value == true? openNavSmall(): null
+          navSmall.value == true ? openNavSmall() : null
           InnerWSmall.value = false
+          InnerBigForNav.value.setInnerWValue(true)
           InnerForNav.value.setInnerWValue(false)
           InnerW.value = true
         }
       }
       else {
+        InnerBigForNav.value.setInnerWValue(false)
         InnerW.value = false
         isOpenContact.value = false
       }
     }
     const route = useRoute();
-    const path = computed(() => returnButton[route.path] ? returnButton[route.path].button : InnerWSmall.value? "Opciones": "Menú")
+    const path = computed(() => returnButton[route.path] ? returnButton[route.path].button : InnerWSmall.value ? "Opciones" : "Menú")
 
     const isDark = ref(darkMode.value.isDark)
     const navBarStatus = ref(navBar.value.isOpen)
@@ -130,9 +134,10 @@ export default {
     }
     const toCorrectPath = () => {
       if (path.value == "Menú" || path.value == "Opciones") {
-
         navBar.value.openCloseNav()
-      } else {window.location.href = returnButton[route.path].link;}
+        navBarSmall.value.openCloseNav()
+        console.log("looolll")
+      } else { window.location.href = returnButton[route.path].link; }
     }
     const toHome = () => {
       window.location.href = "#/";
@@ -143,14 +148,17 @@ export default {
     }
 
     const openNavSmall = () => {
-      if (navSmall.value == false) {
-        var x = window.scrollX;
-        var y = window.scrollY;
-        window.onscroll = function () { window.scrollTo(x, y); };
-      } else {
-        window.onscroll = function () { };
+      if (!navBar.value.isOpen) {
+        if (navSmall.value == false) {
+          var x = window.scrollX;
+          var y = window.scrollY;
+          window.onscroll = function () { window.scrollTo(x, y); };
+        } else {
+          window.onscroll = function () { };
+        }
+        navBarSmall.value.openCloseNav()
       }
-      navSmall.value = !navSmall.value
+
     }
 
     watch(darkMode.value, (dark) => {
@@ -159,6 +167,10 @@ export default {
 
     watch(navBar.value, (newNavBar) => {
       navBarStatus.value = newNavBar.isOpen
+    })
+
+    watch(navBarSmall.value, (newNavBar) => {
+      navSmall.value = newNavBar.isOpen
     })
 
     return {
@@ -373,11 +385,12 @@ button:hover {
     margin-right: 0;
   }
 
-  .registerButtonDark:last-child, .registerButton:last-child{
+  .registerButtonDark:last-child,
+  .registerButton:last-child {
     margin: 10px;
   }
 
-  .smallDark{
+  .smallDark {
     margin-right: 20px !important;
   }
 }
@@ -385,7 +398,7 @@ button:hover {
 
 @media (max-width: 315px) {
 
-  
+
 
   .titleLight {
     font-size: 11vw;
@@ -424,4 +437,5 @@ button:hover {
 }
 
 
-@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');</style>
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+</style>

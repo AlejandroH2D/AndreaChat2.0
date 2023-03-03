@@ -5,11 +5,11 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 
 const httpLink = new HttpLink({
-  uri: 'https://backandreachat.onrender.com/graphql',
+  uri: 'http://192.168.1.105:4000/graphql',
 })
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: 'wss://backandreachat.onrender.com/graphql',
+  url: 'ws://192.168.1.105:4000/graphql',
 }));
 
 export const splitLink  = split(

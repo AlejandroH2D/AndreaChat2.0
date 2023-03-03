@@ -266,7 +266,7 @@ p {
 
   .title {
     text-align: center;
-    margin: auto auto;
+    margin: auto 20px;
     min-width: 0;
   }
 
