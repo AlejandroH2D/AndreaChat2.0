@@ -973,6 +973,7 @@ li:last-child {
   position: absolute;
   width: 20%;
   height: 30px;
+  min-width: 90px;
   background: rgba(3, 27, 38, 0.3);
   left: 40%;
   bottom: 80px;
@@ -1236,11 +1237,18 @@ li:last-child {
   .messagesContent{
     height: calc(100% - 100px);
   }
+
+  .goToBottom{
+    margin-bottom:20px;
+  }
 }
 
 @media (max-height: 360px) {
   .messagesContent{
     height: calc(100% - 110px);
+  }
+  .goToBottom{
+    margin-bottom:30px;
   }
 }
 

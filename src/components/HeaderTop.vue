@@ -134,8 +134,10 @@ export default {
     }
     const toCorrectPath = () => {
       if (path.value == "Menú" || path.value == "Opciones") {
-        navBar.value.openCloseNav()
         navBarSmall.value.openCloseNav()
+        if (path.value == "Opciones") {
+          navBar.value.openCloseNav()
+        }
         console.log("looolll")
       } else { window.location.href = returnButton[route.path].link; }
     }
