@@ -52,10 +52,12 @@ const routes = [
             verifyToken(token: $token)
           }
           `,
+          fetchPolicy: "no-cache" ,
           variables: {
            token: localStorage.token
           }
          }).then(res => {
+          console.log(res)
           return res.data.verifyToken
          })
          if (auth) {
