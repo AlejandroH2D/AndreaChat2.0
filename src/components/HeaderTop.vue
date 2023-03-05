@@ -134,11 +134,14 @@ export default {
     }
     const toCorrectPath = () => {
       if (path.value == "Menú" || path.value == "Opciones") {
+        if (InnerWSmall.value) {
+          navBar.value.openCloseNav()
         navBarSmall.value.openCloseNav()
-        if (path.value == "Opciones") {
+        console.log("XDDDD")
+        } else {
+          console.log("XDDDD2222")
           navBar.value.openCloseNav()
         }
-        console.log("looolll")
       } else { window.location.href = returnButton[route.path].link; }
     }
     const toHome = () => {

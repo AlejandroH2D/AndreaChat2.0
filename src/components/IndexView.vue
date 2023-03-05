@@ -25,7 +25,7 @@
           <div class="option" v-if="InnerW" @click="closeOptions">Cerrar Opciones</div>
           <div class="option" @click="sendCroissant">Enviar Croissant a Jeremy</div>
           <div class="optionClose" @click="closeSession">Cerra Sesión</div>
-          
+
         </div>
       </div>
     </div>
@@ -59,14 +59,14 @@
       </div>
     </div>
     <div :class="{ friendsDark: isDark, friendsLight: !isDark, openList: openFriends }" v-if="!InnerWBig || openFriends">
-      <div :class="{title: true, titleList: openFriends}">
+      <div :class="{ title: true, titleList: openFriends }">
         <h1 class="connects">Amigos</h1>
         <h1 class="connects2" v-if="openFriends" @click="openFriendsList">Cerrar Lista</h1>
       </div>
       <div class="contentList">
         <li v-for="friend, i in friendsList" :key="friend.id" @click="getMessages(friend.id, i)">
           <div :class="{ friendContent: friendSelect != friend.id, friendContentSelect: friendSelect == friend.id }">
-            <img :src="friend.img" alt="friendImg" class="friendImg">
+            <div class="ImgContainer" :style="{backgroundImage: 'url(' + friend.img + ')',   backgroundPosition: '50% 50%', backgroundSize: 'cover', borderRadius: '50%'}"></div>
             <h1 class="friendName">{{ friend.userName }}</h1>
             <div class="StatusFriend">
               <div :class="{ friendConnect: friend.connect, friendDisconnect: !friend.connect }"></div>
@@ -116,12 +116,12 @@ export default {
 
     onMounted(async () => {
       provideApolloClient(defaultClient)
-
-      console.log("Xdddd", InnerW.value)
-
       scrollObj = document.getElementsByClassName("messagesContent");
       scrollObj[0].scrollTop = scrollObj[0].scrollHeight;
       scrollObj[0].addEventListener('scroll', handleScroll)
+      if(InnerBigForNav.value.InnerW == true) {
+        openFriendsList()
+      }
       document.getElementsByClassName('inputMessage')[0].addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && inputMessageContent.value !== '' && friendSelect.value !== '') {
           SENDMESSAGER()
@@ -540,7 +540,7 @@ export default {
 
     const openFriendsList = () => {
       navBar.value.isOpen ? navBar.value.openCloseNav() : null
-      
+
       openFriends.value = !openFriends.value
     }
 
@@ -603,8 +603,13 @@ export default {
 </script>
 
 <style scoped>
+
 *::-webkit-scrollbar {
   display: none;
+}
+
+:root {
+  --main-vw: calc(2vw);
 }
 
 .landing {
@@ -708,19 +713,19 @@ export default {
   border-top-left-radius: 25px;
 }
 
-.openList{
+.openList {
   background: #031b26;
   width: 100% !important;
   border-radius: 0;
 }
 
-.titleList{
+.titleList {
   display: flex;
   justify-content: space-between;
   padding-left: 10px;
 }
 
-.connects2{
+.connects2 {
   color: rgb(156, 44, 44);
   font-family: 'Lobster', cursive;
   font-size: 30px;
@@ -760,13 +765,13 @@ export default {
   display: flex;
   align-items: center;
   width: 100%;
-  height: max(5vw, 64px);
+  height:75px;
   border: 4px solid antiquewhite;
   overflow: auto;
   border-radius: 30px;
   margin-top: 15px;
-  padding-right: 10px;
   box-sizing: border-box;
+  justify-content: space-between;
 }
 
 .friendContentSelect {
@@ -774,7 +779,7 @@ export default {
   display: flex;
   align-items: center;
   width: 100%;
-  height: max(5vw, 64px);
+  height: max(6vw, 64px);
   overflow: auto;
   border: 4px solid;
   border-image:
@@ -789,14 +794,18 @@ export default {
 .friendContent:hover {
   cursor: pointer;
 }
+.ImgContainer{
+  width: 64px;
+  height: 64px;
+  margin-left: 10px;
+  border-radius: 50%;
+
+};
+
 
 .friendImg {
-  width: 4.222vw;
-  height: auto;
-  min-width: 50px;
-  border-radius: 50%;
-  margin: auto 0 auto 1px;
-  border: 3px solid rgba(3, 27, 38, 1);
+  width: 50px; 
+  height: 50px;
 }
 
 li {
@@ -810,15 +819,10 @@ li:last-child {
 .friendName {
   margin: auto 0;
   color: antiquewhite;
-  margin: auto 0 auto 15px;
-
 }
 
 .StatusFriend {
-  width: 100%;
-  display: flex;
-  justify-content: end;
-  margin-left: 5px;
+  margin-right: 10px;
 }
 
 .friendConnect {
@@ -1228,27 +1232,28 @@ li:last-child {
 }
 
 @media (max-width: 859px) {
-  .chatDark{
+  .chatDark {
     width: 100%;
   }
 }
 
 @media (max-height: 570px) {
-  .messagesContent{
+  .messagesContent {
     height: calc(100% - 100px);
   }
 
-  .goToBottom{
-    margin-bottom:20px;
+  .goToBottom {
+    margin-bottom: 20px;
   }
 }
 
 @media (max-height: 360px) {
-  .messagesContent{
+  .messagesContent {
     height: calc(100% - 110px);
   }
-  .goToBottom{
-    margin-bottom:30px;
+
+  .goToBottom {
+    margin-bottom: 30px;
   }
 }
 

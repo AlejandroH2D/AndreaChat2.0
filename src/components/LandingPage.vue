@@ -25,12 +25,16 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { darkMode } from '@/utils/darkMode'
 
 
 export default {
   setup() {
+
+    onMounted(() => {
+      localStorage. clear()
+    })
 
     const count = ref(0)
     const isDark = ref(darkMode.value.isDark)
