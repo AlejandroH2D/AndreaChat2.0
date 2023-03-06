@@ -616,7 +616,7 @@ export default {
   position: relative;
   background: radial-gradient(circle at 51% 100%, rgba(231, 221, 208, 0.835) 0%, rgba(55, 147, 165, 0.696) 100%);
   overflow: hidden;
-  height: 100vh;
+  height: 100dvh;
 }
 
 .landingBlack {
@@ -682,9 +682,11 @@ export default {
 
 .chatLight {
   position: absolute;
+  display: block;
   margin-top: 70px;
   width: 70%;
   height: 90%;
+  overflow: hidden;
 }
 
 .friendsDark {
@@ -695,7 +697,6 @@ export default {
   margin-top: 75px;
   overflow: hidden;
   border-left: 15px solid rgba(3, 27, 38, 0.8);
-  ;
   background: rgba(3, 27, 38, 0.6);
   border-top-left-radius: 25px;
 }
@@ -703,12 +704,11 @@ export default {
 .friendsLight {
   position: absolute;
   right: 0;
-  width: 28%;
+  width: max(28%, 315px);
   height: 100%;
   margin-top: 75px;
   overflow: hidden;
   border-left: 15px solid rgba(3, 27, 38, 0.8);
-  ;
   background: rgba(3, 27, 38, 0.6);
   border-top-left-radius: 25px;
 }
@@ -1226,13 +1226,13 @@ li:last-child {
 }
 
 @media (max-width: 1125px) {
-  .chatDark {
+  .chatDark, .chatLight {
     width: calc(100vw - 338px)
   }
 }
 
 @media (max-width: 859px) {
-  .chatDark {
+  .chatDark, .chatLight {
     width: 100%;
   }
 }

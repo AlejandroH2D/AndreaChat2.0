@@ -57,7 +57,10 @@ const routes = [
            token: localStorage.token
           }
          }).then(res => {
-          console.log("TOKEEENN",res)
+          if(!res.data.verifyToken) {
+            localStorage. clear()
+            next({name: "login"})
+          }
           return res.data.verifyToken
          })
          if (auth) {
