@@ -49,7 +49,28 @@
 
       </div>
       <div class="inputContent">
-        <div class="emojiContent">
+        <div class="picker" v-if="openEmojiPicker">
+          <div class="listClassEmoji">
+            <div class="emojiClass" v-for="classEmoji, i in svgEmojisClass" :key="classEmoji.name"
+              @click="getEmojiClass(i)">
+              <div class="svgClass" v-html="classEmoji.svg"></div>
+              <div class="separador" v-if="classEmoji.name !== 'Flags'"></div>
+            </div>
+          </div>
+          <div class="listEmojis" id="emojiList">
+            <div class="emojiList" v-for="emojiInfo, i in emojiObjRender" :key="emojiInfo.name" :id="i">
+              <div class="emojiTitle">
+                <h1>{{ emojiInfo.name }}</h1>
+              </div>
+              <div class="emojisContainer">
+                <div class="emojis" v-for="info in emojiInfo.emojis" :key="info.title">
+                  <div @click="insertEmoji">{{ info.emoji }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="emojiContent" @click="openEmojis">
           <img src="../../public/happy-icon.svg" alt="SVG" class="emojiSvg">
         </div>
         <input type="text" class="inputMessage" placeholder="Escribe un mensaje" v-model="inputMessageContent">
@@ -66,7 +87,9 @@
       <div class="contentList">
         <li v-for="friend, i in friendsList" :key="friend.id" @click="getMessages(friend.id, i)">
           <div :class="{ friendContent: friendSelect != friend.id, friendContentSelect: friendSelect == friend.id }">
-            <div class="ImgContainer" :style="{backgroundImage: 'url(' + friend.img + ')',   backgroundPosition: '50% 50%', backgroundSize: 'cover', borderRadius: '50%'}"></div>
+            <div class="ImgContainer"
+              :style="{ backgroundImage: 'url(' + friend.img + ')', backgroundPosition: '50% 50%', backgroundSize: 'cover', borderRadius: '50%' }">
+            </div>
             <h1 class="friendName">{{ friend.userName }}</h1>
             <div class="StatusFriend">
               <div :class="{ friendConnect: friend.connect, friendDisconnect: !friend.connect }"></div>
@@ -88,6 +111,7 @@ import gql from 'graphql-tag'
 import './AlertsCSS/imgModal.css'
 import Swal from 'sweetalert2'
 import './AlertsCSS/registerAlerts.css'
+import { emojiObj, categoryFlags } from '@/utils/vanillaEmojiPicker'
 
 
 export default {
@@ -111,6 +135,13 @@ export default {
     const messageList = ref([])
     const inputMessageContent = ref('')
     const openFriends = ref(false)
+    const openEmojiPicker = ref(false)
+    const emojiObjRender = ref(emojiObj)
+    const svgEmojisClass = ref(categoryFlags)
+    // const selector = document.getElementsByClassName("inputMessage")
+    // const insertInto = document.getElementsByClassName("emojiContent")
+
+
 
     // var inputModalCounter = 0
 
@@ -119,7 +150,7 @@ export default {
       scrollObj = document.getElementsByClassName("messagesContent");
       scrollObj[0].scrollTop = scrollObj[0].scrollHeight;
       scrollObj[0].addEventListener('scroll', handleScroll)
-      if(InnerBigForNav.value.InnerW == true) {
+      if (InnerBigForNav.value.InnerW == true) {
         openFriendsList()
       }
       document.getElementsByClassName('inputMessage')[0].addEventListener('keypress', (e) => {
@@ -544,8 +575,24 @@ export default {
       openFriends.value = !openFriends.value
     }
 
+    const openEmojis = () => {
+      openEmojiPicker.value = !openEmojiPicker.value
+    }
+
     const closeOptions = () => {
       navBar.value.openCloseNav()
+    }
+
+    const insertEmoji = (e) => {
+      inputMessageContent.value = inputMessageContent.value + e.target.textContent
+      console.log(e.target.textContent)
+    }
+
+    const getEmojiClass = (e) => {
+      var myElement = document.getElementById(e);
+      myElement.scrollTo(0 , 0)
+      document.getElementById('emojiList').scrollTop = document.getElementById(e).offsetTop - 52;
+      console.log(myElement.scrollTo(0 , 0), e)
     }
 
     watch(navBar.value, (newNavBar) => {
@@ -570,11 +617,14 @@ export default {
 
     return {
       isDark,
+      openEmojiPicker,
+      emojiObjRender,
       idLocal,
       inputMessageContent,
       InnerWBig,
       InnerW,
       openFriends,
+      svgEmojisClass,
       inputModal,
       ownImg,
       hasbenOpen,
@@ -595,6 +645,9 @@ export default {
       sendCroissant,
       openFriendsList,
       closeOptions,
+      openEmojis,
+      insertEmoji,
+      getEmojiClass,
     }
   },
 
@@ -603,7 +656,6 @@ export default {
 </script>
 
 <style scoped>
-
 *::-webkit-scrollbar {
   display: none;
 }
@@ -765,7 +817,7 @@ export default {
   display: flex;
   align-items: center;
   width: 100%;
-  height:75px;
+  height: 75px;
   border: 4px solid antiquewhite;
   overflow: auto;
   border-radius: 30px;
@@ -794,17 +846,20 @@ export default {
 .friendContent:hover {
   cursor: pointer;
 }
-.ImgContainer{
+
+.ImgContainer {
   width: 64px;
   height: 64px;
   margin-left: 10px;
   border-radius: 50%;
 
-};
+}
+
+;
 
 
 .friendImg {
-  width: 50px; 
+  width: 50px;
   height: 50px;
 }
 
@@ -1225,14 +1280,98 @@ li:last-child {
   display: none
 }
 
+.picker {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  width: 300px;
+  height: 300px;
+  background: rgba(216, 171, 112, 0.335);
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.listClassEmoji {
+  display: flex;
+  font-size: 15px;
+  color: white;
+  overflow: auto;
+}
+
+.listEmojis {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.emojisContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.emojiList:last-child .emojisContainer:last-child{
+  margin-bottom: 190px;
+}
+
+.emojiList {
+  width: 100%;
+}
+
+.emojiTitle {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: rgb(0, 0, 0)
+}
+
+.emojis {
+  font-size: 30px;
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
+}
+
+.emojis:hover {
+  cursor: pointer;
+}
+
+.emojiClass {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.svgClass {
+  width: 40px;
+  height: 40px;
+  margin: 0 8px;
+}
+
+.separador {
+  background: antiquewhite;
+  width: 5px;
+  height: 80%;
+  border-radius: 5px;
+}
+
 @media (max-width: 1125px) {
-  .chatDark, .chatLight {
+
+  .chatDark,
+  .chatLight {
     width: calc(100vw - 338px)
   }
 }
 
 @media (max-width: 859px) {
-  .chatDark, .chatLight {
+
+  .chatDark,
+  .chatLight {
     width: 100%;
   }
 }
@@ -1263,5 +1402,4 @@ li:last-child {
   } */
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
-</style>
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');</style>
