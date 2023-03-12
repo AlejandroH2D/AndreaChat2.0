@@ -2,6 +2,9 @@
   <div :class="{ transition: isDark && isChange }"></div>
   <div :class="{ transitionLight: !isDark && isChange }"></div>
   <div :class="{ landing: !isDark, landingBlack: isDark }">
+    <ChangeName @close-name="openCloseNameModal" v-if="nameModalOpen"></ChangeName>
+    <ChangPassword @close-password="openClosePasswordModal" v-if="passwordModalOpen"></ChangPassword>
+
     <div :class="{ bgModal: modelOpen }">
       <div :class="{ imgModalOpen: modelOpen, imgModalClose: !modelOpen && hasbenOpen }">
         <div :class="{ imgDrag: modelOpen }" @drop.prevent="dropHandle" @dragover.prevent @dragenter.prevent
@@ -19,8 +22,8 @@
         <h1 class="titleUserName"> {{ usarNameNav }}</h1>
         <img src="../../public/editIcon.svg" alt="SVG" class="editIcon" @click="openModalupdateImg">
         <div class="optionsContent">
-          <div class="option">UserName</div>
-          <div class="option">Password</div>
+          <div class="option" @click="openCloseNameModal">UserName</div>
+          <div class="option" @click="openClosePasswordModal">Password</div>
           <div class="option" v-if="InnerWBig" @click="openFriendsList">Amigos</div>
           <div class="option" v-if="InnerW" @click="closeOptions">Cerrar Opciones</div>
           <div class="option" @click="sendCroissant">Enviar Croissant a Jeremy</div>
@@ -112,9 +115,15 @@ import './AlertsCSS/imgModal.css'
 import Swal from 'sweetalert2'
 import './AlertsCSS/registerAlerts.css'
 import { emojiObj, categoryFlags } from '@/utils/vanillaEmojiPicker'
-
+import ChangeName from './ChangeName.vue'
+import ChangPassword from './ChangePassword.vue'
 
 export default {
+  
+  components: {
+    ChangeName,
+    ChangPassword
+  },
 
   setup() {
     const modelOpen = ref(false)
@@ -138,6 +147,9 @@ export default {
     const openEmojiPicker = ref(false)
     const emojiObjRender = ref(emojiObj)
     const svgEmojisClass = ref(categoryFlags)
+    const nameModalOpen = ref(false)
+    const passwordModalOpen = ref(false)
+
     // const selector = document.getElementsByClassName("inputMessage")
     // const insertInto = document.getElementsByClassName("emojiContent")
 
@@ -595,6 +607,14 @@ export default {
       console.log(myElement.scrollTo(0 , 0), e)
     }
 
+    const openCloseNameModal = () => {
+      nameModalOpen.value = !nameModalOpen.value
+    }
+
+    const openClosePasswordModal = () => {
+      passwordModalOpen.value = !passwordModalOpen.value
+    }
+
     watch(navBar.value, (newNavBar) => {
       navBarStatus.value = newNavBar.isOpen
     })
@@ -618,11 +638,13 @@ export default {
     return {
       isDark,
       openEmojiPicker,
+      nameModalOpen,
       emojiObjRender,
       idLocal,
       inputMessageContent,
       InnerWBig,
       InnerW,
+      passwordModalOpen,
       openFriends,
       svgEmojisClass,
       inputModal,
@@ -648,6 +670,8 @@ export default {
       openEmojis,
       insertEmoji,
       getEmojiClass,
+      openCloseNameModal,
+      openClosePasswordModal,
     }
   },
 
@@ -1402,4 +1426,6 @@ li:last-child {
   } */
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');</style>
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+</style>
