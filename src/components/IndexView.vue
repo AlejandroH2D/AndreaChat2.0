@@ -153,8 +153,6 @@ export default {
     // const selector = document.getElementsByClassName("inputMessage")
     // const insertInto = document.getElementsByClassName("emojiContent")
 
-
-
     // var inputModalCounter = 0
 
     onMounted(async () => {
